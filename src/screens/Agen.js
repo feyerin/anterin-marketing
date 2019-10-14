@@ -22,7 +22,7 @@ export class Agen extends Component {
   
 
   componentDidMount(){
-    axios.get(URL + "/api/v1/marketing/agents?search=&sort=name&includes=",
+    axios.get(URL + "/api/v1/marketing/agents?search=&sort=name&includes=&limit=143",
     {
       headers : {
         Authorization : 'Bearer ' + localStorage.getItem("token")
@@ -34,6 +34,7 @@ export class Agen extends Component {
       var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
+        item.token = item.balance.data.token;
         newArray.push(item);
       });
       this.setState({
@@ -61,7 +62,7 @@ export class Agen extends Component {
            {/* <Table
             columns={this.column} dataSource={this.state.data} pagination={{defaultPageSize: 20}}
           /> */}
-         <Table dataSource={this.state.data}>
+         <Table dataSource={this.state.data} pagination={{defaultPageSize:30}} >
           <Column title="name" dataIndex="name"  />
           <Column title="phone" dataIndex="phone"  />
           <Column title="address" dataIndex="address"  />
@@ -74,7 +75,6 @@ export class Agen extends Component {
         </Column>
         </Table>,
         </Content>
-        
       </div>
     );
   }

@@ -51,6 +51,7 @@ export class Dealer extends Component {
       var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
+        item.token = item.balance.data.token;
         newArray.push(item);
       });
       this.setState({
@@ -82,6 +83,7 @@ export class Dealer extends Component {
           <Column title="phone" dataIndex="phone"  />
           <Column title="email" dataIndex="email"  />
           <Column title="address" dataIndex="address"  />
+          <Column title="token" dataIndex="token"  />
           <Column title="detail" dataIndex="detail" 
         render={
           (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>

@@ -38,7 +38,7 @@ export default class Login extends React.Component {
       localStorage.setItem("token", jwt);
       localStorage.setItem("expired", expire_at);
       message.info("login berhasil")
-      this.props.history.push('/dashboard')
+      this.props.history.push('/Home')
     }
     )
     .catch(function (error) {

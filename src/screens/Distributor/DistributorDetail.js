@@ -29,6 +29,7 @@ export default class DistributorDetail extends Component {
                 var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
+        item.token = item.balance.data.token;
         newArray.push(item);
       });
       this.setState({
@@ -75,19 +76,23 @@ export default class DistributorDetail extends Component {
                     minHeight: 280,
                 }}
             >
-                <p>{this.props.location.state.name}</p>
-                <p>{this.props.location.state.phone}</p>
-                <p>{this.props.location.state.address}</p>
-                <p>{this.props.location.state.drivers_total}</p>
-                <p>{this.props.location.state.token}</p>
+                <p>nama    : {this.props.location.state.name}</p>
+                <p>phone   : {this.props.location.state.phone}</p>
+                <p>address : {this.props.location.state.address}</p>
+                <p>token   : {this.props.location.state.balance.data.token}</p>
+                <p>dealers total : {this.props.location.state.dealers_total}</p>
+                <p>agen total : {this.props.location.state.agents_total}</p>
+                <p>driver total : {this.props.location.state.drivers_total}</p>
+
                 
 
                 <Tabs defaultActiveKey="1" onChange={this.onSwichDrivers}>
-                    <TabPane tab="Agent" key="1">
+                    <TabPane tab="Dealer" key="1">
                         <Table dataSource={this.state.data}>
                             <Column title="name" dataIndex="name"  />
                             <Column title="phone" dataIndex="phone"  />
                             <Column title="address" dataIndex="address"  />
+                            <Column title="token" dataIndex="token"  />
                             <Column title="drivers total" dataIndex="drivers_total"  />
                         </Table>
                     </TabPane>
@@ -98,7 +103,6 @@ export default class DistributorDetail extends Component {
                             <Column title="email" dataIndex="email"  />
                             <Column title="gender" dataIndex="gender"  />
                             <Column title="address" dataIndex="address"  />
-                            <Column title="drivers total" dataIndex="drivers_total"  />
                         </Table>
                     </TabPane>
                 </Tabs>

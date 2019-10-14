@@ -9,7 +9,7 @@ export default class DetailColumn extends Component {
     }
     onDetail = () => {
         const axios = require('axios');
-        axios.get("https://oapi.anterin.id/api/v1/marketing/spread" + this.props.data.id,
+        axios.get("https://oapi.anterin.id/api/v1/marketing/distributors/" + this.props.data.id,
             {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem("token")
@@ -18,7 +18,7 @@ export default class DetailColumn extends Component {
                 console.log('response: ', response.data.data);
                 this.props.history.push(
                     {
-                        pathname: "/SpreadDetail",
+                        pathname: "/DistributorDetail",
                         state: response.data.data
                     }
                 )

@@ -19,7 +19,7 @@ export default class AgenDetail extends Component {
       
 
     componentDidMount(){
-        axios.get(URL + "api/v1/marketing/agents/" + this.props.location.state.id + '/drivers',
+        axios.get(URL + "api/v1/marketing/agents/" + this.props.location.state.id + '/drivers&limit=100',
             {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem("token")
@@ -51,17 +51,16 @@ export default class AgenDetail extends Component {
                     minHeight: 280,
                 }}
             >
-                <p>{this.props.location.state.name}</p>
-                <p>{this.props.location.state.phone}</p>
-                <p>{this.props.location.state.address}</p>
-                <p>{this.props.location.state.drivers_total}</p>
-                <p>{this.props.location.state.token}</p>
+                <p>name         : {this.props.location.state.name}</p>
+                <p>phone        : {this.props.location.state.phone}</p>
+                <p>address      : {this.props.location.state.address}</p>
+                <p>total drivers: {this.props.location.state.drivers_total}</p>
+                <p>token        : {this.props.location.state.token}</p>
 
                     <Table dataSource={this.state.data}>
                         <Column title="name" dataIndex="name"  />
                         <Column title="phone" dataIndex="phone"  />
                         <Column title="address" dataIndex="address"  />
-                        <Column title="drivers total" dataIndex="drivers_total"  />
                     </Table>
             </Content>
         )
