@@ -1,0 +1,36 @@
+@import "~antd/dist/antd.css";
+
+.root {
+  height: 100%;
+}
+#components-layout-demo-custom-trigger .trigger {
+  font-size: 18px;
+  height: 800px;
+  line-height: 100%;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+#components-layout-demo-custom-trigger .trigger:hover {
+  color: #24f1be;
+}
+
+#components-form-demo-normal-login .login-form {
+  max-width: 300px;
+}
+#components-form-demo-normal-login .login-form-forgot {
+  float: right;
+}
+#components-form-demo-normal-login .login-form-button {
+  width: 100%;
+}
+.login-form {
+  max-width: 300px;
+}
+.login-form-forgot {
+  float: right;
+}
+.login-form-button {
+  width: 100%;
+}
