@@ -14,7 +14,7 @@ export default class Login extends React.Component {
     super(props);
     console.log(localStorage.getItem("token"))
     if(localStorage.getItem("token") != null){
-      this.props.history.push('/dashboard')
+      this.props.history.push('/')
       console.log("login")
     }
   }

@@ -15,38 +15,65 @@ export default class Driver extends Component {
     }
   }
 
+  state = {
+    data : [],
+    pagination : {
+    current : 1
+    },
+    loading : false
+  };          
+  
+  componentDidMount() {
+    this.fetch();
+  }
 
-    state = {
-        data : []
-      };
+  handleTableChange = (pagination) => {
+    const pager = { ...this.state.pagination };
+    console.log("PAGER", pager);
+    pager.current = pagination.current;
+    this.setState({
+      ...this.state,
+      pagination: pager
+    },() => this.fetch());    
+  }
 
-    componentDidMount(){
-      axios.get(URL + "api/v1/marketing/drivers?search=&sort=name&includes=&limit=200",
+  fetch = () => {
+    //nampilin loading
+    this.setState({ 
+      ...this.state,
+      loading: true });
+    console.log("current page", this.state.pagination.current)
+    axios.get(
+      URL + "api/v1/marketing/drivers?search=&sort=name&includes=&page=" + this.state.pagination.current,
       {
-        headers : {
-          Authorization : 'Bearer ' + localStorage.getItem("token")
-        }
-      })
-      .then(response => {
-        console.log(response);
-        console.log("Driver");
-        var newArray = [];
-        response.data.data.forEach(item => {
-          item.key = item.id;
-          //item.token = item.balance.data.token;
-          //console.log("item :", item.balance.data.token)
-          newArray.push(item);
-          
-        });
-        this.setState({
-          ...this.state,
-          data: newArray
-        });
-      })
-      .catch(function(error) {
-        console.log(error);
-      })
-    }
+      //tambahin token
+      headers : {
+        Authorization: "Bearer "+ localStorage.getItem("token")
+      }
+      
+    }).then(response => {
+      
+      console.log(response);
+      const pagination = { ...this.state.pagination };
+      pagination.total = 144;
+      console.log('pagination state', this.state.pagination);
+      var newArray = [];
+      response.data.data.forEach(item => {
+        item.key = item.id;
+        //item.token = item.balance.data.token;
+        newArray.push(item);
+      });
+      this.setState({
+        ...this.state,
+        data: newArray,
+        loading: false,
+        pagination,
+      });
+    })
+    .catch(function(error) {
+      console.log(error);
+    })
+  }
     
     render(){
         return(
@@ -59,7 +86,11 @@ export default class Driver extends Component {
             minHeight: 280,
           }}
         >
-         <Table dataSource={this.state.data} pagination={{defaultPageSize:30}}>
+         <Table 
+          dataSource={this.state.data} 
+          pagination={this.state.pagination} 
+          loading={this.state.loading}
+          onChange={this.handleTableChange}>
           <Column title="name" dataIndex="name"  />
           <Column title="phone" dataIndex="phone"  />
           <Column title="gender" dataIndex="gender"  />

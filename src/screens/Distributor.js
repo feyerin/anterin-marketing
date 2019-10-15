@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Table,Layout} from "antd";
+import {Table,Layout,Breadcrumb,Icon} from "antd";
 import axios from "axios";
 import {URL} from "../components/BaseUrl";
 import DetailColumn from "../screens/Distributor/DetailColumn";
@@ -17,10 +17,12 @@ export default class Distributor extends Component {
   }
 
     state = {
-        data : []
+        data : [],
+        loading : false,
       };
 
     componentDidMount(){
+      this.setState({ loading: true });
       axios.get(URL + "/api/v1/marketing/distributors?search=&sort=-balance",
       {
         headers : {
@@ -38,7 +40,8 @@ export default class Distributor extends Component {
         });
         this.setState({
           ...this.state,
-          data: newArray
+          data: newArray,
+          loading: false,
         });
       })
       .catch(function(error) {
@@ -48,33 +51,40 @@ export default class Distributor extends Component {
     }
 
     render(){
-
         return(
-        <Content
-            style={{
-            background: '#fff',
-            padding: 24,
-            margin: 0,
-            marginTop: 16,
-            minHeight: 280,
-          }}
-        >
-        <Table dataSource={this.state.data} pagination={{defaultPageSize: 20}} >
-          <Column title="name" dataIndex="name"  />
-          <Column title="phone" dataIndex="phone"  />
-          <Column title="email" dataIndex="email"  />
-          <Column title="address" dataIndex="address"  />
-          {/* <Column title="token" dataIndex="token"  /> */}
-          <Column title="detail" dataIndex="detail" 
-        render={
-          (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>
-        }
-        > 
-        </Column>
-        </Table>,
-        </Content>
-        );
-
-        
+          <div>
+            <Breadcrumb style={{padding:5}}>
+            <Breadcrumb.Item>
+              <Icon type="idcard" />
+              <span>Distributor</span>
+            </Breadcrumb.Item>
+            </Breadcrumb>
+            <Content
+              style={{
+              background: '#fff',
+              padding: 24,
+              margin: 0,
+              minHeight: 280,
+            }}
+            >
+            <Table 
+              dataSource={this.state.data} 
+              pagination={{defaultPageSize: 20}} 
+              loading={this.state.loading}>
+              <Column title="name" dataIndex="name"  />
+              <Column title="phone" dataIndex="phone"  />
+              <Column title="email" dataIndex="email"  />
+              <Column title="address" dataIndex="address"  />
+              {/* <Column title="token" dataIndex="token"  /> */}
+              <Column title="detail" dataIndex="detail" 
+            render={
+              (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>
+            }
+            > 
+            </Column>
+            </Table>,
+            </Content>
+          </div>
+      );
     }
 }

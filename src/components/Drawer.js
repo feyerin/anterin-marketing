@@ -58,7 +58,7 @@ export default class Drawer extends Component {
           </Menu.Item>
           <Menu.Item key="3">
             <Link to="/Dealer">
-              <Icon type="user" />
+              <Icon type="audit" />
               <span>Dealer</span>
             </Link>
           </Menu.Item>
@@ -70,7 +70,7 @@ export default class Drawer extends Component {
           </Menu.Item>
           <Menu.Item key="5">
             <Link to="/Driver">
-              <Icon type="audit" />
+              <Icon type="user" />
               <span>Driver</span>
             </Link>
           </Menu.Item>

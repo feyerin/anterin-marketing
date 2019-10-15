@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table,Layout,Tabs } from 'antd';
+import { Table,Layout,Tabs,Breadcrumb,Icon } from 'antd';
 import axios from 'axios';
 
 
@@ -15,31 +15,86 @@ export default class AgenDetail extends Component {
 
     state = {
         data : [],
-        drivers:[]
+        drivers:[],
+        pagination : {
+            current : 1
+          },
+        loading: false,
       };
       
-    componentDidMount(){
-        axios.get("https://oapi.anterin.id/api/v1/marketing/dealers/" + this.props.location.state.id + '/agents',
-            {
-                headers: {
-                    Authorization: 'Bearer ' + localStorage.getItem("token")
-                }
-            }).then(response => {
-                console.log('NESTEDCALLAPI ', response.data.data);
-                var newArray = [];
-      response.data.data.forEach(item => {
-        item.key = item.id;
-        newArray.push(item);
-      });
-      this.setState({
-        ...this.state,
-        data: newArray
-      });
+      handleTableChange = (pagination) => {
+        const pager = { ...this.state.pagination };
+        console.log("PAGER", pager);
+        pager.current = pagination.current;
+        this.setState({
+          ...this.state,
+          pagination: pager
+        },() => this.fetch());    
+      }
+
+      componentDidMount(){
+        this.fetch();
+      }
+
+      fetch = () => {
+        this.setState({ 
+          ...this.state,
+          loading: true });
+        console.log("current page", this.state.pagination.current)
+        axios.get(
+          "https://oapi.anterin.id/api/v1/marketing/dealers/" + this.props.location.state.id + '/agents?page='
+          + this.state.pagination.current,
+          {
+          headers : {
+            Authorization: "Bearer "+ localStorage.getItem("token")
+          }
+          
+        }).then(response => {
+          
+          console.log(response);
+          const pagination = { ...this.state.pagination };
+          pagination.total = 500;
+          console.log('pagination state', this.state.pagination);
+          var newArray = [];
+          response.data.data.forEach(item => {
+            item.key = item.id;
+            item.token = item.balance.data.token;
+            newArray.push(item);
+          });
+          this.setState({
+            ...this.state,
+            data: newArray,
+            loading: false,
+            pagination,
+          });
+        })
+        .catch(function(error) {
+          console.log(error);
+        })
+      }
+
+    // componentDidMount(){
+    //     axios.get("https://oapi.anterin.id/api/v1/marketing/dealers/" + this.props.location.state.id + '/agents',
+    //         {
+    //             headers: {
+    //                 Authorization: 'Bearer ' + localStorage.getItem("token")
+    //             }
+    //         }).then(response => {
+    //             console.log('NESTEDCALLAPI ', response.data.data);
+    //             var newArray = [];
+    //   response.data.data.forEach(item => {
+    //     item.key = item.id;
+    //     newArray.push(item);
+    //   });
+    //   this.setState({
+    //     ...this.state,
+    //     data: newArray
+    //   });
                 
-            }).catch(function (error) {
-                console.log(error);
-            });
-    }
+    //         }).catch(function (error) {
+    //             console.log(error);
+    //         });
+    // }
 
     onSwichDrivers = () => {
         const axios = require('axios');
@@ -53,6 +108,7 @@ export default class AgenDetail extends Component {
                 var newArray = [];
                 response.data.data.forEach(item => {
                     item.key = item.id;
+                    item.token = item.balance.data.token;
                     newArray.push(item);
                 })
                 this.setState({
@@ -66,33 +122,51 @@ export default class AgenDetail extends Component {
 
     render() {
         return (
+            <div>
+            <Breadcrumb style={{padding:5}}>
+            <Breadcrumb.Item>
+              <Icon type="audit" />
+              <span>Dealer</span>
+            </Breadcrumb.Item>
+            <Breadcrumb.Item>
+              <span>Detail</span>
+            </Breadcrumb.Item>
+            </Breadcrumb>
             <Content
                 style={{
                     background: '#fff',
                     padding: 24,
                     margin: 0,
-                    marginTop: 16,
                     minHeight: 280,
                 }}
             >
-                <p>{this.props.location.state.name}</p>
-                <p>{this.props.location.state.phone}</p>
-                <p>{this.props.location.state.address}</p>
-                <p>{this.props.location.state.drivers_total}</p>
-                <p>{this.props.location.state.token}</p>
-                
+                <p>name          : {this.props.location.state.name}</p>
+                <p>phone         : {this.props.location.state.phone}</p>
+                <p>address       : {this.props.location.state.address}</p>
+                <p>agents total  : {this.props.location.state.agents_total}</p>
+                <p>drivers total : {this.props.location.state.drivers_total}</p>
+                <p>token         : {this.props.location.state.balance.data.token}</p>
 
                 <Tabs defaultActiveKey="1"  onChange={this.onSwichDrivers} >
-                    <TabPane tab="Agent" key="1">
-                        <Table dataSource={this.state.data}>
+                    <TabPane tab="Agents" key="1">
+                        <Table 
+                            dataSource={this.state.data}
+                            pagination={this.state.pagination} 
+                            loading={this.state.loading}
+                            onChange={this.handleTableChange}>
                             <Column title="name" dataIndex="name"  />
                             <Column title="phone" dataIndex="phone"  />
                             <Column title="address" dataIndex="address"  />
+                            <Column title="token" dataIndex="token"/>
                             <Column title="drivers total" dataIndex="drivers_total"  />
                         </Table>
                     </TabPane>
                     <TabPane tab="Drivers" key="2">
-                    <Table dataSource={this.state.drivers}>
+                    <Table 
+                        dataSource={this.state.drivers}
+                        pagination={this.state.pagination} 
+                            loading={this.state.loading}
+                            onChange={this.handleTableChange}>
                             <Column title="name" dataIndex="name"  />
                             <Column title="phone" dataIndex="phone"  />
                             <Column title="email" dataIndex="email"  />
@@ -103,6 +177,7 @@ export default class AgenDetail extends Component {
                     </TabPane>
                 </Tabs>
             </Content>
+            </div>
         )
     }
 }

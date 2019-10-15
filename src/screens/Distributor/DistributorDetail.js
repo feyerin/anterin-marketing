@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table,Layout,Tabs } from 'antd';
+import { Table,Layout,Tabs,Breadcrumb,Icon } from 'antd';
 import axios from 'axios';
 
 
@@ -16,35 +16,72 @@ export default class DistributorDetail extends Component {
     state = {
         data : [],
         drivers:[],
+        pagination : {
+            current : 1
+          },
+        loading: false,
       };
+
+      handleTableChange = (pagination) => {
+        const pager = { ...this.state.pagination };
+        console.log("PAGER", pager);
+        pager.current = pagination.current;
+        this.setState({
+          ...this.state,
+          pagination: pager
+        },() => this.fetch());    
+      }
+
+      componentDidMount(){
+        this.fetch();
+      }
+
+      fetch = () => {
+        this.setState({ 
+          ...this.state,
+          loading: true });
+        console.log("current page", this.state.pagination.current)
+        axios.get(
+          "https://oapi.anterin.id/api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers?page='
+          + this.state.pagination.current,
+          {
+          headers : {
+            Authorization: "Bearer "+ localStorage.getItem("token")
+          }
+          
+        }).then(response => {
+          
+          console.log(response);
+          const pagination = { ...this.state.pagination };
+          pagination.total = 500;
+          console.log('pagination state', this.state.pagination);
+          var newArray = [];
+          response.data.data.forEach(item => {
+            item.key = item.id;
+            item.token = item.balance.data.token;
+            newArray.push(item);
+          });
+          this.setState({
+            ...this.state,
+            data: newArray,
+            loading: false,
+            pagination,
+          });
+        })
+        .catch(function(error) {
+          console.log(error);
+        })
+      }
       
-    componentDidMount(){
-        axios.get("https://oapi.anterin.id/api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers',
-            {
-                headers: {
-                    Authorization: 'Bearer ' + localStorage.getItem("token")
-                }
-            }).then(response => {
-                console.log('dealer from distributor ', response.data.data);
-                var newArray = [];
-      response.data.data.forEach(item => {
-        item.key = item.id;
-        item.token = item.balance.data.token;
-        newArray.push(item);
-      });
-      this.setState({
-        ...this.state,
-        data: newArray
-      });
-                
-            }).catch(function (error) {
-                console.log(error);
-            });
-    }
 
     onSwichDrivers = () => {
+        this.setState({ 
+            ...this.state,
+            loading: true });
         const axios = require('axios');
-        axios.get("https://oapi.anterin.id/api/v1/marketing/distributors/" + this.props.location.state.id + '/drivers',
+        axios.get(
+            "https://oapi.anterin.id/api/v1/marketing/distributors/" + this.props.location.state.id + '/drivers?page='
+            + this.state.pagination.current,
             {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem("token")
@@ -58,7 +95,8 @@ export default class DistributorDetail extends Component {
                 })
                 this.setState({
                     ...this.state,
-                    drivers: newArray
+                    drivers: newArray,
+                    loading: false
                   });
             }).catch(function (error) {
                 console.log(error);
@@ -67,12 +105,21 @@ export default class DistributorDetail extends Component {
 
     render() {
         return (
+            <div>
+            <Breadcrumb style={{padding:5}}>
+            <Breadcrumb.Item>
+              <Icon type="idcard" />
+              <span>Distributor</span>
+            </Breadcrumb.Item>
+            <Breadcrumb.Item>
+              <span>Detail</span>
+            </Breadcrumb.Item>
+            </Breadcrumb>
             <Content
                 style={{
                     background: '#fff',
                     padding: 24,
                     margin: 0,
-                    marginTop: 16,
                     minHeight: 280,
                 }}
             >
@@ -84,11 +131,13 @@ export default class DistributorDetail extends Component {
                 <p>agen total : {this.props.location.state.agents_total}</p>
                 <p>driver total : {this.props.location.state.drivers_total}</p>
 
-                
-
                 <Tabs defaultActiveKey="1" onChange={this.onSwichDrivers}>
                     <TabPane tab="Dealer" key="1">
-                        <Table dataSource={this.state.data}>
+                        <Table 
+                            dataSource={this.state.data}
+                            pagination={this.state.pagination} 
+                            loading={this.state.loading}
+                            onChange={this.handleTableChange}>
                             <Column title="name" dataIndex="name"  />
                             <Column title="phone" dataIndex="phone"  />
                             <Column title="address" dataIndex="address"  />
@@ -97,7 +146,11 @@ export default class DistributorDetail extends Component {
                         </Table>
                     </TabPane>
                     <TabPane tab="Drivers" key="2" >
-                    <Table dataSource={this.state.drivers}>
+                    <Table 
+                        dataSource={this.state.drivers}
+                        pagination={this.state.pagination} 
+                            loading={this.state.loading}
+                            onChange={this.handleTableChange}>>
                             <Column title="name" dataIndex="name"  />
                             <Column title="phone" dataIndex="phone"  />
                             <Column title="email" dataIndex="email"  />
@@ -107,6 +160,7 @@ export default class DistributorDetail extends Component {
                     </TabPane>
                 </Tabs>
             </Content>
+            </div>
         )
     }
 }

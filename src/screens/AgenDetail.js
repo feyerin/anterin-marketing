@@ -19,7 +19,7 @@ export default class AgenDetail extends Component {
       
 
     componentDidMount(){
-        axios.get(URL + "api/v1/marketing/agents/" + this.props.location.state.id + '/drivers&limit=100',
+        axios.get(URL + "api/v1/marketing/agents/" + this.props.location.state.id + '/drivers',
             {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem("token")
@@ -29,6 +29,7 @@ export default class AgenDetail extends Component {
                 var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
+        item.token = item.balance.data.token;
         newArray.push(item);
       });
       this.setState({
@@ -55,7 +56,7 @@ export default class AgenDetail extends Component {
                 <p>phone        : {this.props.location.state.phone}</p>
                 <p>address      : {this.props.location.state.address}</p>
                 <p>total drivers: {this.props.location.state.drivers_total}</p>
-                <p>token        : {this.props.location.state.token}</p>
+                <p>token        : {this.props.location.state.balance.data.token}</p>
 
                     <Table dataSource={this.state.data}>
                         <Column title="name" dataIndex="name"  />

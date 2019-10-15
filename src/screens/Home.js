@@ -1,9 +1,6 @@
 import React, { Component } from "react";
-import { Layout,Table,Pagination } from "antd";
-import {URL} from "../components/BaseUrl";
+import { Layout,Table, Breadcrumb, Icon } from "antd";
 import axios from 'axios';
-import DetailColumn from '../screens/spread/DetailColumn';
-
 
 const { Column } = Table;
 const { Content } = Layout;
@@ -12,7 +9,6 @@ export class Home extends Component {
   //verivikator login
   constructor(props){
     super(props);
-    console.log(localStorage.getItem("token"))
     if(localStorage.getItem("token") == null){
       this.props.history.push('/')
       console.log("login")
@@ -20,38 +16,43 @@ export class Home extends Component {
   }
   state = {
     data : [],
-    pagination : {},
+    pagination : {
+      current : 1
+    },
     loading : false
   };
 
   handleTableChange = (pagination) => {
     const pager = { ...this.state.pagination };
+    console.log("PAGER", pager);
     pager.current = pagination.current;
+    console.log("current ", pager.current)
     this.setState({
-      pagination: pager,
-    });
-    this.fetch({
-      results: pagination.pageSize,
-      page: pagination.current,
-    });
-  };
+      ...this.state,
+      pagination: pager
+    },() => this.fetch());    
+  }
 
-  
+  componentDidMount() {
+    this.fetch();
+  }
 
-  
-
-  componentDidMount(){
-    this.setState({ loading: true });
-    axios.get(URL + "api/v1/marketing/spread",
-    {
+  fetch = () => {
+    this.setState({ 
+      ...this.state,
+      loading: true });
+    console.log("ONREQUEST", this.state)
+    axios.get(
+      "https://oapi.anterin.id/api/v1/marketing/spread?page="+ this.state.pagination.current,
+      {
       headers : {
-        Authorization : 'Bearer ' + localStorage.getItem("token")
+        Authorization: "Bearer "+ localStorage.getItem("token")
       }
-    }
-    )
-    .then(response => {
+    }).then(response => {
+      console.log("ONFINISHREQUEST:", this.state.pagination.current)
       console.log(response);
-      console.log("Agen");
+      const pagination = { ...this.state.pagination };
+      pagination.total = 30;
       var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.province_id;
@@ -61,6 +62,7 @@ export class Home extends Component {
         ...this.state,
         data: newArray,
         loading: false,
+        pagination,
       });
     })
     .catch(function(error) {
@@ -70,36 +72,39 @@ export class Home extends Component {
 
   render() {
     return (
-      
       <div>
+        <Breadcrumb style={{padding:5}}>
+          <Breadcrumb.Item>
+            <Icon type="home" />
+            <span>Home</span>
+          </Breadcrumb.Item>
+          </Breadcrumb>
         <Content
           style={{
             background: '#fff',
             padding: 24,
             margin: 0,
-            marginTop: 16,
             minHeight: 280,
           }}
         >
-        <Table dataSource={this.state.data} pagination={true}  >
+        <Table 
+          onChange={this.handleTableChange}
+          dataSource={this.state.data}
+          pagination={this.state.pagination} 
+          loading={this.state.loading}
+          >   
           <Column title="name" dataIndex="name"  />
           <Column title="distributors" dataIndex="distributors"  />
           <Column title="dealers total" dataIndex="dealers_total"  />
           <Column title="agent total" dataIndex="agents_total"  />
           <Column title="drivers total" dataIndex="drivers_total" />
-          {/* <Column title="detail" dataIndex="detail"  
-          // render={
-          //   (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>
-          // }
-           
-          /> */}
           
           </Table>
         </Content>
 
       </div>
     );
-  }
-}
+        }
+      }
 
 export default Home;
