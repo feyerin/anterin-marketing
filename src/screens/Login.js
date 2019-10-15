@@ -21,10 +21,12 @@ export default class Login extends React.Component {
   
   state = {
     email: "",
-    password: ""
+    password: "",
+    loading: false,
   };
 
   login = (_email, _password) => {
+    this.setState({loading: true });
   const LOGIN_ENDPOINT = `${URL}api/v1/marketing/login`;
   axios.post(LOGIN_ENDPOINT, {
     email: _email,
@@ -37,6 +39,7 @@ export default class Login extends React.Component {
       console.log(response)
       localStorage.setItem("token", jwt);
       localStorage.setItem("expired", expire_at);
+      this.setState({ loading: false });
       message.info("login berhasil")
       this.props.history.push('/Home')
     }
@@ -100,6 +103,7 @@ export default class Login extends React.Component {
               className="login-form-button"
               style={{ width: '100%' }}
               onClick={() => this.onClicked()}
+              loading={this.state.loading}
             >
               Log in
           </Button>
