@@ -75,6 +75,7 @@ export default class Distributor extends Component {
               <Column title="phone" dataIndex="phone"  />
               <Column title="email" dataIndex="email"  />
               <Column title="address" dataIndex="address"  />
+              <Column title="dealers total" dataIndex="dealers_total"  />
               {/* <Column title="token" dataIndex="token"  /> */}
               <Column title="detail" dataIndex="detail" 
             render={

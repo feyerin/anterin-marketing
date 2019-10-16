@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import { Layout,Table } from "antd";
+import { Layout,Table,Breadcrumb,Icon } from "antd";
 import axios from 'axios';
-import { URL } from '../components/BaseUrl';
 import DetailColumn from './DetailColumn';
 
 const { Column } = Table;
@@ -59,7 +58,6 @@ export class Agen extends Component {
       var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
-        //item.token = item.balance.data.token;
         newArray.push(item);
       });
       this.setState({
@@ -77,12 +75,17 @@ export class Agen extends Component {
   render() {
     return (
       <div>
+        <Breadcrumb style={{padding:5}}>
+            <Breadcrumb.Item>
+              <Icon type="book" />
+              <span>Agent</span>
+            </Breadcrumb.Item>
+        </Breadcrumb>
         <Content
           style={{
             background: '#fff',
             padding: 24,
             margin: 0,
-            marginTop: 16,
             minHeight: 280,
           }}
         >
@@ -99,7 +102,6 @@ export class Agen extends Component {
           <Column title="phone" dataIndex="phone"  />
           <Column title="address" dataIndex="address"  />
           <Column title="drivers total" dataIndex="drivers_total"  />
-          {/* <Column title="token" dataIndex="token"  /> */}
           <Column title="detail" dataIndex="detail" 
         render={
           (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>

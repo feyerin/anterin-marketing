@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table,Layout } from 'antd';
+import { Table,Layout,Breadcrumb,Icon,Descriptions } from 'antd';
 import axios from 'axios';
 import {URL} from '../components/BaseUrl';
 
@@ -29,34 +29,45 @@ export default class AgenDetail extends Component {
                 var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
-        item.token = item.balance.data.token;
+        //item.token = item.balance.data.token;
         newArray.push(item);
+        console.log ("get token :", item.balance.data.token)
       });
       this.setState({
         ...this.state,
         data: newArray
       });
-                
             }).catch(function (error) {
                 console.log(error);
             });
     }
     render() {
         return (
+            <div>
+            <Breadcrumb style={{padding:5}}>
+            <Breadcrumb.Item>
+              <Icon type="audit" />
+              <span>Agents</span>
+            </Breadcrumb.Item>
+            <Breadcrumb.Item>
+              <span>Detail</span>
+            </Breadcrumb.Item>
+            </Breadcrumb>
             <Content
                 style={{
                     background: '#fff',
                     padding: 24,
                     margin: 0,
-                    marginTop: 16,
                     minHeight: 280,
                 }}
             >
-                <p>name         : {this.props.location.state.name}</p>
-                <p>phone        : {this.props.location.state.phone}</p>
-                <p>address      : {this.props.location.state.address}</p>
-                <p>total drivers: {this.props.location.state.drivers_total}</p>
-                <p>token        : {this.props.location.state.balance.data.token}</p>
+                <Descriptions title="Dealers Info" size="small" column={2}>
+                  <Descriptions.Item label="name">{this.props.location.state.name}                    </Descriptions.Item>
+                  <Descriptions.Item label="token"> <a>{this.props.location.state.balance.data.token}</a></Descriptions.Item>
+                  <Descriptions.Item label="phone">{this.props.location.state.phone}                  </Descriptions.Item>
+                  <Descriptions.Item label="drivers total">{this.props.location.state.drivers_total}  </Descriptions.Item>
+                  <Descriptions.Item label="address">{this.props.location.state.address}              </Descriptions.Item>
+                </Descriptions>
 
                     <Table dataSource={this.state.data}>
                         <Column title="name" dataIndex="name"  />
@@ -64,6 +75,7 @@ export default class AgenDetail extends Component {
                         <Column title="address" dataIndex="address"  />
                     </Table>
             </Content>
+            </div>
         )
     }
 }

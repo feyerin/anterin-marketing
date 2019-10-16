@@ -57,12 +57,13 @@ export class Dealer extends Component {
       
       console.log(response);
       const pagination = { ...this.state.pagination };
-      pagination.total = 144;
+      pagination.total = 500;
       console.log('pagination state', this.state.pagination);
       var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
         //item.token = item.balance.data.token;
+        console.log("get token",item.balance.data)
         newArray.push(item);
       });
       this.setState({
@@ -105,7 +106,7 @@ export class Dealer extends Component {
           <Column title="email" dataIndex="email"  />
           <Column title="address" dataIndex="address"  />
           <Column title="agents total" dataIndex="agents_total"  />
-          {/* <Column title="token" dataIndex="token"  /> */}
+          <Column title="token" dataIndex="token"  />
           <Column title="detail" dataIndex="detail" 
         render={
           (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>

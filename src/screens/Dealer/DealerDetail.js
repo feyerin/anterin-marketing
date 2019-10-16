@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table,Layout,Tabs,Breadcrumb,Icon } from 'antd';
+import { Table,Layout,Tabs,Breadcrumb,Icon,Descriptions } from 'antd';
 import axios from 'axios';
 
 
@@ -48,9 +48,7 @@ export default class AgenDetail extends Component {
           headers : {
             Authorization: "Bearer "+ localStorage.getItem("token")
           }
-          
         }).then(response => {
-          
           console.log(response);
           const pagination = { ...this.state.pagination };
           pagination.total = 500;
@@ -59,6 +57,7 @@ export default class AgenDetail extends Component {
           response.data.data.forEach(item => {
             item.key = item.id;
             item.token = item.balance.data.token;
+            console.log("get token", item.balance.data.token)
             newArray.push(item);
           });
           this.setState({
@@ -73,47 +72,34 @@ export default class AgenDetail extends Component {
         })
       }
 
-    // componentDidMount(){
-    //     axios.get("https://oapi.anterin.id/api/v1/marketing/dealers/" + this.props.location.state.id + '/agents',
-    //         {
-    //             headers: {
-    //                 Authorization: 'Bearer ' + localStorage.getItem("token")
-    //             }
-    //         }).then(response => {
-    //             console.log('NESTEDCALLAPI ', response.data.data);
-    //             var newArray = [];
-    //   response.data.data.forEach(item => {
-    //     item.key = item.id;
-    //     newArray.push(item);
-    //   });
-    //   this.setState({
-    //     ...this.state,
-    //     data: newArray
-    //   });
-                
-    //         }).catch(function (error) {
-    //             console.log(error);
-    //         });
-    // }
-
     onSwichDrivers = () => {
+      this.setState({ 
+        ...this.state,
+        loading: true });
+        console.log("current page", this.state.pagination.current)
         const axios = require('axios');
-        axios.get("https://oapi.anterin.id/api/v1/marketing/dealers/" + this.props.location.state.id + '/drivers',
+        axios.get("https://oapi.anterin.id/api/v1/marketing/dealers/" + this.props.location.state.id + '/drivers?page='
+        + this.state.pagination.current,
             {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem("token")
                 }
             }).then(response => {
                 console.log('NESTEDCALLAPI ', response.data.data);
+                console.log("current page", this.state.pagination.current)
+                const pagination = { ...this.state.pagination };
+                pagination.total = 400;
                 var newArray = [];
                 response.data.data.forEach(item => {
                     item.key = item.id;
-                    item.token = item.balance.data.token;
+                    //item.token = item.balance.data.token;
                     newArray.push(item);
                 })
                 this.setState({
                     ...this.state,
-                    drivers: newArray
+                    drivers: newArray,
+                    loading: false,
+                    pagination,
                   });
             }).catch(function (error) {
                 console.log(error);
@@ -140,13 +126,14 @@ export default class AgenDetail extends Component {
                     minHeight: 280,
                 }}
             >
-                <p>name          : {this.props.location.state.name}</p>
-                <p>phone         : {this.props.location.state.phone}</p>
-                <p>address       : {this.props.location.state.address}</p>
-                <p>agents total  : {this.props.location.state.agents_total}</p>
-                <p>drivers total : {this.props.location.state.drivers_total}</p>
-                <p>token         : {this.props.location.state.balance.data.token}</p>
-
+                <Descriptions title="Dealers Info" size="small" column={2}>
+                  <Descriptions.Item label="name">{this.props.location.state.name}                    </Descriptions.Item>
+                  <Descriptions.Item label="token"> <a>{this.props.location.state.balance.data.token}</a></Descriptions.Item>
+                  <Descriptions.Item label="agents total">{this.props.location.state.agents_total}    </Descriptions.Item>
+                  <Descriptions.Item label="phone">{this.props.location.state.phone}                  </Descriptions.Item>
+                  <Descriptions.Item label="drivers total">{this.props.location.state.drivers_total}  </Descriptions.Item>
+                  <Descriptions.Item label="address">{this.props.location.state.address}              </Descriptions.Item>
+                </Descriptions>
                 <Tabs defaultActiveKey="1"  onChange={this.onSwichDrivers} >
                     <TabPane tab="Agents" key="1">
                         <Table 
@@ -163,16 +150,15 @@ export default class AgenDetail extends Component {
                     </TabPane>
                     <TabPane tab="Drivers" key="2">
                     <Table 
-                        dataSource={this.state.drivers}
-                        pagination={this.state.pagination} 
+                            dataSource={this.state.drivers}
+                            pagination={this.state.pagination} 
                             loading={this.state.loading}
-                            onChange={this.handleTableChange}>
+                            onChange={this.onSwichDrivers}>
                             <Column title="name" dataIndex="name"  />
                             <Column title="phone" dataIndex="phone"  />
                             <Column title="email" dataIndex="email"  />
                             <Column title="gender" dataIndex="gender"  />
                             <Column title="address" dataIndex="address"  />
-                            <Column title="drivers total" dataIndex="drivers_total"  />
                         </Table>
                     </TabPane>
                 </Tabs>

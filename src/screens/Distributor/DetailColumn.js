@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import { Table, Button } from "antd";
-
-const { Column } = Table;
+import { Button } from "antd";
 
 export default class DetailColumn extends Component {
     state = {

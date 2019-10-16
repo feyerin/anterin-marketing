@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Table,Layout} from "antd";
+import { Table,Layout,Avatar} from "antd";
 import axios from "axios";
 import {URL} from "../components/BaseUrl";
 
@@ -30,10 +30,11 @@ export default class Driver extends Component {
   handleTableChange = (pagination) => {
     const pager = { ...this.state.pagination };
     console.log("PAGER", pager);
+   
     pager.current = pagination.current;
     this.setState({
       ...this.state,
-      pagination: pager
+      pagination: pager,
     },() => this.fetch());    
   }
 
@@ -55,7 +56,7 @@ export default class Driver extends Component {
       
       console.log(response);
       const pagination = { ...this.state.pagination };
-      pagination.total = 144;
+      pagination.total = 440595;
       console.log('pagination state', this.state.pagination);
       var newArray = [];
       response.data.data.forEach(item => {
@@ -88,13 +89,24 @@ export default class Driver extends Component {
         >
          <Table 
           dataSource={this.state.data} 
-          pagination={this.state.pagination} 
+          pagination={this.state.pagination}
           loading={this.state.loading}
           onChange={this.handleTableChange}>
+          <Column
+            title="Avatar"
+            dataIndex="photo"
+            key="tags"
+            render={tags => (
+              <span>
+                <Avatar src="this.state.data.photo" />
+              </span>
+            )}
+          />
           <Column title="name" dataIndex="name"  />
           <Column title="phone" dataIndex="phone"  />
           <Column title="gender" dataIndex="gender"  />
           <Column title="address" dataIndex="address"  />
+          
           {/* <Column title="token" dataIndex="token"  /> */}
           </Table>
         </Content>

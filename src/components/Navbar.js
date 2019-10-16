@@ -9,9 +9,9 @@ export default class Navbar extends Component {
     return (
       <div>
         <Header style={{ background: "#fff", paddingLeft : '100%', float:"right"  }} >
-            {/* <Badge count={1}>
+            <Badge>
                 <Avatar shape="circle" icon="user" />
-            </Badge> */}
+            </Badge>
         </Header>     
       </div>
     );

@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import { Table, Button } from "antd";
+import { Button } from "antd";
 import { URL } from '../components/BaseUrl';
-
-const { Column } = Table;
 
 export default class DetailColumn extends Component {
     state = {

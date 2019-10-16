@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Layout } from "antd";
-import { BrowserRouter, Route } from "react-router-dom";
+import { Route } from "react-router-dom";
 import "../App.css";
 import Home from "./Home";
 import Drawer from "../components/Drawer";
@@ -9,7 +9,6 @@ import Distributor from "../screens/Distributor";
 import Driver from "./Driver";
 import Dealer from "./Dealer";
 import Agen from "./Agen";
-import Login from "./Login";
 import Logout from "./Logout";
 
 const { Content } = Layout;
