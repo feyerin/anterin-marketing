@@ -3,9 +3,11 @@ import { Button } from "antd";
 
 export default class DetailColumn extends Component {
     state = {
-        userData: {}
+        userData: {},
+        loading:false
     }
     onDetail = () => {
+        this.setState({ loading: true });
         const axios = require('axios');
         axios.get("https://oapi.anterin.id/api/v1/marketing/distributors/" + this.props.data.id,
             {
@@ -29,7 +31,10 @@ export default class DetailColumn extends Component {
     render() {
         return (
             <div>
-                <Button type="primary" onClick={this.onDetail}>Detail</Button>
+                <Button type="primary" 
+                onClick={this.onDetail}
+                loading={this.state.loading}
+                >Detail</Button>
             </div>
         );
     }
