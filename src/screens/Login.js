@@ -68,18 +68,16 @@ export default class Login extends React.Component {
   onClicked = () => {
     console.log(this)
     this.login(this.state.email, this.state.password)
-    //this.login("anterin.id@gmail.com", "alwaysSUKSES!#!#!#")
   }
 
   render() {
     return (
-      <Form style={{ margin: 100, marginLeft: '37%', textAlign: 'center' }} className="login-form" >
+      <Form style={{ margin: 200, marginLeft: '40%', textAlign: 'center' }} className="login-form" >
         <Form.Item  >
           <Input
             prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />}
             placeholder="email"
             onChange={(e) => this.getEmailValue(e)}
-          //getFieldsValue={this.data.email}
           />
         </Form.Item>
         <Form.Item>
@@ -88,12 +86,11 @@ export default class Login extends React.Component {
             type="password"
             placeholder="Password"
             onChange={(e) => this.getPasswordValue(e)}
-          //getFieldsValue={this.data.password}
           />
         </Form.Item>
         <Form.Item >
           <Checkbox style={{ float: 'left' }}>Remember me</Checkbox>
-          <a className="login-form-forgot" href="" style={{ float: 'right' }}>
+          <a className="login-form-forgot" style={{ float: 'right' }}>
             Forgot password
           </a>
           <br></br>
@@ -109,7 +106,7 @@ export default class Login extends React.Component {
           </Button>
           
           <br></br>
-          Or <a href="">register now!</a>
+          Or <a>register now!</a>
         </Form.Item>
       </Form>
     );

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table,Layout,Tabs,Breadcrumb,Icon } from 'antd';
+import { Table,Layout,Tabs,Breadcrumb,Icon,Descriptions } from 'antd';
 import axios from 'axios';
 
 
@@ -123,14 +123,17 @@ export default class DistributorDetail extends Component {
                     minHeight: 280,
                 }}
             >
-                <p>nama    : {this.props.location.state.name}</p>
-                <p>phone   : {this.props.location.state.phone}</p>
-                <p>address : {this.props.location.state.address}</p>
-                <p>token   : {this.props.location.state.balance.data.token}</p>
-                <p>dealers total : {this.props.location.state.dealers_total}</p>
-                <p>agen total : {this.props.location.state.agents_total}</p>
-                <p>driver total : {this.props.location.state.drivers_total}</p>
 
+                <Descriptions title="Distributor Info" size="small" column={2}>
+                  <Descriptions.Item label="name">{this.props.location.state.name}                  </Descriptions.Item>
+                  <Descriptions.Item label="dealers total"> {this.props.location.state.dealers_total}</Descriptions.Item>
+                  <Descriptions.Item label="token"> <a>{this.props.location.state.balance.data.token}</a></Descriptions.Item>
+                  <Descriptions.Item label="agents total">{this.props.location.state.agents_total}    </Descriptions.Item>
+                  <Descriptions.Item label="phone">{this.props.location.state.phone}                  </Descriptions.Item>
+                  <Descriptions.Item label="drivers total">{this.props.location.state.drivers_total}  </Descriptions.Item>
+                  <Descriptions.Item label="address">{this.props.location.state.address}              </Descriptions.Item>
+                </Descriptions>
+                
                 <Tabs defaultActiveKey="1" onChange={this.onSwichDrivers}>
                     <TabPane tab="Dealer" key="1">
                         <Table 
