@@ -9,7 +9,13 @@ const { Content } = Layout;
 export default class AgenDetail extends Component {
     constructor(props) {
         super(props)
-        console.log("TES PASSING DATA", props.location.state)
+        var container = '';
+        if (props.location.state.balance.code === 401){
+            container = "user not registered"
+        }else{
+            container = props.location.state.balance.data.token
+        }
+        console.log("TES PASSING DATA", props.container)
     }
 
     state = {
@@ -29,7 +35,11 @@ export default class AgenDetail extends Component {
                 var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
-        //item.token = item.balance.data.token;
+        if (item.balance.code === 401){
+            item.token = "user not registered"
+          }else{
+            item.token = item.balance.data.token
+          }
         newArray.push(item);
         console.log ("get token :", item.balance.data.token)
       });
@@ -63,7 +73,7 @@ export default class AgenDetail extends Component {
             >
                 <Descriptions title="Dealers Info" size="small" column={2}>
                   <Descriptions.Item label="name">{this.props.location.state.name}                    </Descriptions.Item>
-                  <Descriptions.Item label="token"> <a>{this.props.location.state.balance.data.token}</a></Descriptions.Item>
+                  <Descriptions.Item label="token"> <a>{this.props.location.container}</a>            </Descriptions.Item>
                   <Descriptions.Item label="phone">{this.props.location.state.phone}                  </Descriptions.Item>
                   <Descriptions.Item label="drivers total">{this.props.location.state.drivers_total}  </Descriptions.Item>
                   <Descriptions.Item label="address">{this.props.location.state.address}              </Descriptions.Item>
@@ -73,6 +83,7 @@ export default class AgenDetail extends Component {
                         <Column title="name" dataIndex="name"  />
                         <Column title="phone" dataIndex="phone"  />
                         <Column title="address" dataIndex="address"  />
+                        <Column title="token" dataIndex="token"/>
                     </Table>
             </Content>
             </div>

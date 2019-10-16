@@ -68,7 +68,11 @@ export default class DistributorDetail extends Component {
           var newArray = [];
           response.data.data.forEach(item => {
             item.key = item.id;
-            item.token = item.balance.data.token;
+            if (item.balance.code === 401){
+              item.token = "user not registered"
+            }else{
+              item.token = item.balance.data.token
+            }
             newArray.push(item);
           });
           this.setState({
@@ -105,6 +109,11 @@ export default class DistributorDetail extends Component {
                 var newArray = [];
                 response.data.data.forEach(item => {
                     item.key = item.id;
+                    if (item.balance.code === 401){
+                      item.token = "user not registered"
+                    }else{
+                      item.token = item.balance.data.token
+                    }
                     newArray.push(item);
                 })
                 this.setState({
@@ -142,7 +151,7 @@ export default class DistributorDetail extends Component {
                 <Descriptions title="Distributor Info" size="small" column={2}>
                   <Descriptions.Item label="name">{this.props.location.state.name}                  </Descriptions.Item>
                   <Descriptions.Item label="dealers total"> {this.props.location.state.dealers_total}</Descriptions.Item>
-                  <Descriptions.Item label="token"> <a>{this.props.location.state.balance.data.token}</a></Descriptions.Item>
+                  <Descriptions.Item label="token"> {this.props.location.state.balance.data.token}</Descriptions.Item>
                   <Descriptions.Item label="agents total">{this.props.location.state.agents_total}    </Descriptions.Item>
                   <Descriptions.Item label="phone">{this.props.location.state.phone}                  </Descriptions.Item>
                   <Descriptions.Item label="drivers total">{this.props.location.state.drivers_total}  </Descriptions.Item>
@@ -159,8 +168,8 @@ export default class DistributorDetail extends Component {
                             <Column title="name" dataIndex="name"  />
                             <Column title="phone" dataIndex="phone"  />
                             <Column title="address" dataIndex="address"  />
-                            <Column title="token" dataIndex="token"  />
                             <Column title="drivers total" dataIndex="drivers_total"  />
+                            <Column title="token" dataIndex="token"  />
                         </Table>
                     </TabPane>
                     <TabPane tab="Drivers" key="2" >
@@ -174,6 +183,7 @@ export default class DistributorDetail extends Component {
                             <Column title="email" dataIndex="email"  />
                             <Column title="gender" dataIndex="gender"  />
                             <Column title="address" dataIndex="address"  />
+                            <Column title="token" dataIndex="token"  />
                         </Table>
                     </TabPane>
                 </Tabs>

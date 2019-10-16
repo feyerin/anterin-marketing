@@ -65,7 +65,11 @@ export default class AgenDetail extends Component {
           var newArray = [];
           response.data.data.forEach(item => {
             item.key = item.id;
-            item.token = item.balance.data.token;
+            if (item.balance.code === 401){
+              item.token = "user not registered"
+            }else{
+              item.token = item.balance.data.token
+            }
             console.log("get token", item.balance.data.token)
             newArray.push(item);
           });
@@ -101,7 +105,11 @@ export default class AgenDetail extends Component {
                 var newArray = [];
                 response.data.data.forEach(item => {
                     item.key = item.id;
-                    //item.token = item.balance.data.token;
+                    if (item.balance.code === 401){
+                      item.token = "user not registered"
+                    }else{
+                      item.token = item.balance.data.token
+                    }
                     newArray.push(item);
                 })
                 this.setState({
@@ -137,7 +145,7 @@ export default class AgenDetail extends Component {
             >
                 <Descriptions title="Dealers Info" size="small" column={2}>
                   <Descriptions.Item label="name">{this.props.location.state.name}                    </Descriptions.Item>
-                  <Descriptions.Item label="token"> <a>{this.props.location.state.balance.data.token}</a></Descriptions.Item>
+                  <Descriptions.Item label="token"> {this.props.location.state.token}          </Descriptions.Item>
                   <Descriptions.Item label="agents total">{this.props.location.state.agents_total}    </Descriptions.Item>
                   <Descriptions.Item label="phone">{this.props.location.state.phone}                  </Descriptions.Item>
                   <Descriptions.Item label="drivers total">{this.props.location.state.drivers_total}  </Descriptions.Item>

@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { Layout,Table, Breadcrumb, Icon } from "antd";
+import { Layout,Table, Breadcrumb, Icon, Input, Divider } from "antd";
 import axios from 'axios';
 
 const { Column } = Table;
 const { Content } = Layout;
+const { Search } = Input;
 
 export class Home extends Component {
   //verivikator login
@@ -52,7 +53,7 @@ export class Home extends Component {
       console.log("ONFINISHREQUEST:", this.state.pagination.current)
       console.log(response);
       const pagination = { ...this.state.pagination };
-      pagination.total = 30;
+      pagination.total = 40;
       var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.province_id;
@@ -87,6 +88,11 @@ export class Home extends Component {
             minHeight: 280,
           }}
         >
+         <Search
+              placeholder="input name"
+              style={{ width: 200 }}
+            />
+          <Divider/>
         <Table 
           onChange={this.handleTableChange}
           dataSource={this.state.data}

@@ -3,6 +3,7 @@ import { Table,Layout,Avatar} from "antd";
 import axios from "axios";
 import {URL} from "../components/BaseUrl";
 
+
 const { Content } = Layout;
 const { Column } = Table;
 export default class Driver extends Component {
@@ -18,7 +19,7 @@ export default class Driver extends Component {
   state = {
     data : [],
     pagination : {
-    current : 1
+      current : 1
     },
     loading : false
   };          
@@ -61,7 +62,12 @@ export default class Driver extends Component {
       var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
-        //item.token = item.balance.data.token;
+        if (item.balance.code === 401){
+          item.token = "user not registered"
+        }else{
+          item.token = item.balance.data.token
+        }
+        console.log("avater :", item.photo)
         newArray.push(item);
       });
       this.setState({
@@ -96,18 +102,17 @@ export default class Driver extends Component {
             title="Avatar"
             dataIndex="photo"
             key="tags"
-            render={tags => (
+            render={photo => (
               <span>
-                <Avatar src="this.state.data.photo" />
+                <Avatar src={this.state.data.photo} />
               </span>
             )}
           />
           <Column title="name" dataIndex="name"  />
           <Column title="phone" dataIndex="phone"  />
           <Column title="gender" dataIndex="gender"  />
-          <Column title="address" dataIndex="address"  />
-          
-          {/* <Column title="token" dataIndex="token"  /> */}
+          <Column title="address" dataIndex="address"  />          
+          <Column title="token" dataIndex="token"  />
           </Table>
         </Content>
         );

@@ -35,7 +35,12 @@ export default class Distributor extends Component {
         var newArray = [];
         response.data.data.forEach(item => {
           item.key = item.id;
-          //item.token = item.balance.data.token;
+          if (item.balance.code === 401){
+            item.token = "user not registered"
+          }else{
+            item.token = item.balance.data.token
+          }
+          console.log("status code", item.balance.code)
           newArray.push(item);
         });
         this.setState({
@@ -76,7 +81,7 @@ export default class Distributor extends Component {
               <Column title="email" dataIndex="email"  />
               <Column title="address" dataIndex="address"  />
               <Column title="dealers total" dataIndex="dealers_total"  />
-              {/* <Column title="token" dataIndex="token"  /> */}
+              <Column title="token" dataIndex="token"  />
               <Column title="detail" dataIndex="detail" 
             render={
               (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>

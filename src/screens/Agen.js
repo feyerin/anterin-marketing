@@ -58,6 +58,11 @@ export class Agen extends Component {
       var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
+        if (item.balance.code === 401){
+          item.token = "user not registered"
+        }else{
+          item.token = item.balance.data.token
+        }
         newArray.push(item);
       });
       this.setState({
@@ -89,9 +94,6 @@ export class Agen extends Component {
             minHeight: 280,
           }}
         >
-           {/* <Table
-            columns={this.column} dataSource={this.state.data} pagination={{defaultPageSize: 20}}
-          /> */}
          <Table 
           dataSource={this.state.data} 
           pagination={this.state.pagination} 
@@ -102,6 +104,7 @@ export class Agen extends Component {
           <Column title="phone" dataIndex="phone"  />
           <Column title="address" dataIndex="address"  />
           <Column title="drivers total" dataIndex="drivers_total"  />
+          <Column title="token" dataIndex="token"  />
           <Column title="detail" dataIndex="detail" 
         render={
           (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>
