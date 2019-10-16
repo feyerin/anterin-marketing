@@ -4,9 +4,11 @@ import { URL } from '../components/BaseUrl';
 
 export default class DetailColumn extends Component {
     state = {
-        userData: {}
+        userData: {},
+        loading:false
     }
     onDetail = () => {
+        this.setState({ loading: true });
         const axios = require('axios');
         axios.get(URL + "api/v1/marketing/agents/" + this.props.data.id,
             {
@@ -18,7 +20,8 @@ export default class DetailColumn extends Component {
                 this.props.history.push(
                     {
                         pathname: "/AgenDetail",
-                        state: response.data.data
+                        state: response.data.data,
+                        loading:false
                     }
                 )
             }).catch(function (error) {
@@ -30,7 +33,10 @@ export default class DetailColumn extends Component {
     render() {
         return (
             <div>
-                <Button type="primary" onClick={this.onDetail}>Detail</Button>
+                <Button type="primary" 
+                onClick={this.onDetail}
+                loading={this.state.loading}
+                >Detail</Button>
             </div>
         );
     }

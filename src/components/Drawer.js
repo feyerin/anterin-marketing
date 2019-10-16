@@ -65,7 +65,7 @@ export default class Drawer extends Component {
           <Menu.Item key="4">
             <Link to="/Agen">
               <Icon type="book" />
-              <span>Agen</span>
+              <span>Agent</span>
             </Link>
           </Menu.Item>
           <Menu.Item key="5">

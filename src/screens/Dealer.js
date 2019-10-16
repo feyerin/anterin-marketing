@@ -106,7 +106,6 @@ export class Dealer extends Component {
           <Column title="email" dataIndex="email"  />
           <Column title="address" dataIndex="address"  />
           <Column title="agents total" dataIndex="agents_total"  />
-          <Column title="token" dataIndex="token"  />
           <Column title="detail" dataIndex="detail" 
         render={
           (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>
