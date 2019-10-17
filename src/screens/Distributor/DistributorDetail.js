@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Table,Layout,Tabs,Breadcrumb,Icon,Descriptions } from 'antd';
 import axios from 'axios';
+import {animated} from 'react-spring';
+
 
 
 const { Column } = Table;
@@ -11,6 +13,12 @@ export default class DistributorDetail extends Component {
     constructor(props) {
         super(props)
         console.log("TES PASSING DATA", props.location.state)
+        if (props.location.state.balance.code === 401){
+          this.container = "user not registered"
+       }else{
+           this.container = props.location.state.balance.data.token
+       }
+       console.log("TES PASSING DATA", this.container)
     }
 
     state = {
@@ -149,9 +157,9 @@ export default class DistributorDetail extends Component {
             >
 
                 <Descriptions title="Distributor Info" size="small" column={2}>
-                  <Descriptions.Item label="name">{this.props.location.state.name}                  </Descriptions.Item>
-                  <Descriptions.Item label="dealers total"> {this.props.location.state.dealers_total}</Descriptions.Item>
-                  <Descriptions.Item label="token"> {this.props.location.state.balance.data.token}</Descriptions.Item>
+                  <Descriptions.Item label="name">{this.props.location.state.name}                    </Descriptions.Item>
+                  <Descriptions.Item label="dealers total">{this.props.location.state.dealers_total}</Descriptions.Item>
+                  <Descriptions.Item label="token"><a> {this.container}</a>                                  </Descriptions.Item>
                   <Descriptions.Item label="agents total">{this.props.location.state.agents_total}    </Descriptions.Item>
                   <Descriptions.Item label="phone">{this.props.location.state.phone}                  </Descriptions.Item>
                   <Descriptions.Item label="drivers total">{this.props.location.state.drivers_total}  </Descriptions.Item>

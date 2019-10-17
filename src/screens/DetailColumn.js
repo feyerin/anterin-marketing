@@ -7,6 +7,7 @@ export default class DetailColumn extends Component {
         userData: {},
         loading:false
     }
+    
     onDetail = () => {
         this.setState({ loading: true });
         const axios = require('axios');
@@ -28,7 +29,6 @@ export default class DetailColumn extends Component {
                 console.log(error);
             });
     }
-
 
     render() {
         return (

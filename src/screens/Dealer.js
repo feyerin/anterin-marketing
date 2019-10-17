@@ -25,7 +25,6 @@ export class Dealer extends Component {
   };
 
   componentDidMount() {
-    //ini ceritanya langsung ngambil data pas masuk App
     this.fetch();
   }
 
@@ -40,7 +39,6 @@ export class Dealer extends Component {
   }
 
   fetch = () => {
-    //nampilin loading
     this.setState({ 
       ...this.state,
       loading: true });
@@ -48,7 +46,6 @@ export class Dealer extends Component {
     axios.get(
       "https://oapi.anterin.id/api/v1/marketing/dealers?page="+ this.state.pagination.current,
       {
-      //tambahin token
       headers : {
         Authorization: "Bearer "+ localStorage.getItem("token")
       }

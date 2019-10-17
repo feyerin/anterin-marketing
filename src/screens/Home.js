@@ -20,7 +20,8 @@ export class Home extends Component {
     pagination : {
       current : 1
     },
-    loading : false
+    loading : false,
+    Search: '',
   };
 
   handleTableChange = (pagination) => {

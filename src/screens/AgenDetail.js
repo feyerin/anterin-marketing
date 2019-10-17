@@ -7,20 +7,21 @@ const { Column } = Table;
 const { Content } = Layout;
 
 export default class AgenDetail extends Component {
+    
     constructor(props) {
         super(props)
-        var container = '';
+        //var container = '';
         if (props.location.state.balance.code === 401){
-            container = "user not registered"
+           this.container = "user not registered"
         }else{
-            container = props.location.state.balance.data.token
+            this.container = props.location.state.balance.data.token
         }
-        console.log("TES PASSING DATA", props.container)
+        console.log("TES PASSING DATA", this.container)
     }
 
     state = {
         data : [],
-        drivers:[]
+        drivers:[],
       };
       
 
@@ -73,7 +74,7 @@ export default class AgenDetail extends Component {
             >
                 <Descriptions title="Dealers Info" size="small" column={2}>
                   <Descriptions.Item label="name">{this.props.location.state.name}                    </Descriptions.Item>
-                  <Descriptions.Item label="token"> <a>{this.props.location.container}</a>            </Descriptions.Item>
+                  <Descriptions.Item label="token"> <a>{this.container}</a>                           </Descriptions.Item>
                   <Descriptions.Item label="phone">{this.props.location.state.phone}                  </Descriptions.Item>
                   <Descriptions.Item label="drivers total">{this.props.location.state.drivers_total}  </Descriptions.Item>
                   <Descriptions.Item label="address">{this.props.location.state.address}              </Descriptions.Item>
@@ -82,7 +83,7 @@ export default class AgenDetail extends Component {
                     <Table dataSource={this.state.data}>
                         <Column title="name" dataIndex="name"  />
                         <Column title="phone" dataIndex="phone"  />
-                        <Column title="address" dataIndex="address"  />
+                        <Column title="address" dataIndex="address"  /> 
                         <Column title="token" dataIndex="token"/>
                     </Table>
             </Content>

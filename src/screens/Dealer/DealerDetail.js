@@ -11,6 +11,12 @@ export default class AgenDetail extends Component {
     constructor(props) {
         super(props)
         console.log("TES PASSING DATA", props.location.state)
+        if (props.location.state.balance.code === 401){
+          this.container = "user not registered"
+       }else{
+           this.container = props.location.state.balance.data.token
+       }
+       console.log("TES PASSING DATA", this.container)
     }
 
     state = {
@@ -145,7 +151,7 @@ export default class AgenDetail extends Component {
             >
                 <Descriptions title="Dealers Info" size="small" column={2}>
                   <Descriptions.Item label="name">{this.props.location.state.name}                    </Descriptions.Item>
-                  <Descriptions.Item label="token"> {this.props.location.state.token}          </Descriptions.Item>
+                  <Descriptions.Item label="token"> {this.container}                                  </Descriptions.Item>
                   <Descriptions.Item label="agents total">{this.props.location.state.agents_total}    </Descriptions.Item>
                   <Descriptions.Item label="phone">{this.props.location.state.phone}                  </Descriptions.Item>
                   <Descriptions.Item label="drivers total">{this.props.location.state.drivers_total}  </Descriptions.Item>
