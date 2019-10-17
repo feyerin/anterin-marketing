@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Table,Layout,Tabs,Breadcrumb,Icon,Descriptions } from 'antd';
 import axios from 'axios';
-import {animated} from 'react-spring';
+import { CSVLink } from "react-csv";
 
 
 
@@ -40,7 +40,6 @@ export default class DistributorDetail extends Component {
         },() => this.fetch());    
       }
 
-
       handleTableDriversChange = (pagination) => {
         const pager = { ...this.state.pagination };
         console.log("PAGER", pager);
@@ -50,7 +49,6 @@ export default class DistributorDetail extends Component {
           pagination: pager
         },() => this.onSwichDrivers());    
       }
-
 
       componentDidMount(){
         this.fetch();
@@ -94,7 +92,6 @@ export default class DistributorDetail extends Component {
           console.log(error);
         })
       }
-      
 
     onSwichDrivers = () => {
         this.setState({ 
@@ -135,6 +132,37 @@ export default class DistributorDetail extends Component {
             });
     }
 
+    ExportDealer = () => {
+      axios.get(
+        "https://oapi.anterin.id/api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers?limit=50'
+        + this.state.pagination.current,
+        {
+        headers : {
+          Authorization: "Bearer "+ localStorage.getItem("token")
+        }
+      }).then(response => {
+        console.log("response", response);
+        var newArray = [];
+        response.data.data.forEach(item => {
+          item.key = item.id;
+          if (item.balance.code === 401){
+            item.token = "user not registered"
+          }else{
+            item.token = item.balance.data.token
+          }
+          newArray.push(item);
+        });
+        this.setState({
+          ...this.state,
+          data: newArray,
+        });
+        console.log("data  :", this.state.data)
+      })
+      .catch(function(error) {
+        console.log(error);
+      })
+    }
+
     render() {
         return (
             <div>
@@ -164,6 +192,8 @@ export default class DistributorDetail extends Component {
                   <Descriptions.Item label="phone">{this.props.location.state.phone}                  </Descriptions.Item>
                   <Descriptions.Item label="drivers total">{this.props.location.state.drivers_total}  </Descriptions.Item>
                   <Descriptions.Item label="address">{this.props.location.state.address}              </Descriptions.Item>
+                  <Descriptions.Item label="Export Dealer"><CSVLink data={this.state.data} onClick={this.ExportDealer}>Export to CSV</CSVLink> </Descriptions.Item>
+                  
                 </Descriptions>
                 
                 <Tabs defaultActiveKey="1" onChange={this.onSwichDrivers}>

@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import {Table,Layout,Breadcrumb,Icon} from "antd";
+import {Table,Layout,Breadcrumb,Icon,Divider} from "antd";
 import axios from "axios";
 import {URL} from "../components/BaseUrl";
 import DetailColumn from "../screens/Distributor/DetailColumn";
+import { CSVLink } from "react-csv";
 
 const { Content } = Layout;
 const{Column} = Table;
@@ -72,6 +73,8 @@ export default class Distributor extends Component {
               minHeight: 280,
             }}
             >
+            <CSVLink style={{float:"right"}} data={this.state.data}>Export to CSV</CSVLink>
+            <Divider/>
             <Table 
               dataSource={this.state.data} 
               pagination={{defaultPageSize: 20}} 

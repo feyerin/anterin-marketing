@@ -88,10 +88,6 @@ export class Home extends Component {
             minHeight: 280,
           }}
         >
-         <Search
-              placeholder="input name"
-              style={{ width: 200 }}
-            />
           <Divider/>
         <Table 
           onChange={this.handleTableChange}

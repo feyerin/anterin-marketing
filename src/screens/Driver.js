@@ -10,7 +10,6 @@ export default class Driver extends Component {
   //Login verivikator
   constructor(props){
     super(props);
-    console.log(localStorage.getItem("token"))
     if(localStorage.getItem("token") == null){
       this.props.history.push('/')
     }
@@ -57,7 +56,8 @@ export default class Driver extends Component {
       
       console.log(response);
       const pagination = { ...this.state.pagination };
-      pagination.total = 440595;
+      console.log("total page :", this.state.data)
+      pagination.total = 500000;
       console.log('pagination state', this.state.pagination);
       var newArray = [];
       response.data.data.forEach(item => {
@@ -67,7 +67,7 @@ export default class Driver extends Component {
         }else{
           item.token = item.balance.data.token
         }
-        console.log("avater :", item.photo)
+        console.log('photo source', item.photo);
         newArray.push(item);
       });
       this.setState({
@@ -98,16 +98,6 @@ export default class Driver extends Component {
           pagination={this.state.pagination}
           loading={this.state.loading}
           onChange={this.handleTableChange}>
-          <Column
-            title="Avatar"
-            dataIndex="photo"
-            key="tags"
-            render={photo => (
-              <span>
-                <Avatar src={this.state.data.photo} />
-              </span>
-            )}
-          />
           <Column title="name" dataIndex="name"  />
           <Column title="phone" dataIndex="phone"  />
           <Column title="gender" dataIndex="gender"  />
