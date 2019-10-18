@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table,Layout,Tabs,Breadcrumb,Icon,Descriptions } from 'antd';
+import { Table,Layout,Tabs,Breadcrumb,Icon,Descriptions,Button, Divider,notification } from 'antd';
 import axios from 'axios';
 import { CSVLink } from "react-csv";
 
@@ -8,6 +8,13 @@ import { CSVLink } from "react-csv";
 const { Column } = Table;
 const { Content } = Layout;
 const { TabPane } = Tabs;
+const openNotificationWithIcon = type => {
+  notification[type]({
+    message: 'attention',
+    description:
+      'always click generate button before exporting data to CSV or the data will be not complete',
+  });
+};
 
 export default class DistributorDetail extends Component {
     constructor(props) {
@@ -28,6 +35,7 @@ export default class DistributorDetail extends Component {
             current : 1
           },
         loading: false,
+        showMe: false
       };
 
       handleTableChange = (pagination) => {
@@ -125,6 +133,7 @@ export default class DistributorDetail extends Component {
                     ...this.state,
                     drivers: newArray,
                     loading: false,
+                    showMe:false,
                     pagination
                   });
             }).catch(function (error) {
@@ -133,6 +142,7 @@ export default class DistributorDetail extends Component {
     }
 
     ExportDealer = () => {
+      this.setState({ loading: true });
       axios.get(
         "https://oapi.anterin.id/api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers?limit=50'
         + this.state.pagination.current,
@@ -155,6 +165,9 @@ export default class DistributorDetail extends Component {
         this.setState({
           ...this.state,
           data: newArray,
+          loading:false,
+          showMe:true
+
         });
         console.log("data  :", this.state.data)
       })
@@ -186,13 +199,30 @@ export default class DistributorDetail extends Component {
 
                 <Descriptions title="Distributor Info" size="small" column={2}>
                   <Descriptions.Item label="name">{this.props.location.state.name}                    </Descriptions.Item>
-                  <Descriptions.Item label="dealers total">{this.props.location.state.dealers_total}</Descriptions.Item>
-                  <Descriptions.Item label="token"><a> {this.container}</a>                                  </Descriptions.Item>
+                  <Descriptions.Item label="dealers total">{this.props.location.state.dealers_total}  </Descriptions.Item>
+                  <Descriptions.Item label="token"><a> {this.container}</a>                           </Descriptions.Item>
                   <Descriptions.Item label="agents total">{this.props.location.state.agents_total}    </Descriptions.Item>
                   <Descriptions.Item label="phone">{this.props.location.state.phone}                  </Descriptions.Item>
                   <Descriptions.Item label="drivers total">{this.props.location.state.drivers_total}  </Descriptions.Item>
                   <Descriptions.Item label="address">{this.props.location.state.address}              </Descriptions.Item>
-                  <Descriptions.Item label="Export Dealer"><CSVLink data={this.state.data} onClick={this.ExportDealer}>Export to CSV</CSVLink> </Descriptions.Item>
+                  <Descriptions.Item label="Export Dealer">  
+                    <Button type="primary" size="small" 
+                      onClick={this.ExportDealer}
+                      loading={this.state.loading}> 
+                      genetate data
+                    </Button>
+                    <Divider type="vertical"/>
+                    {
+                     this.state.showMe? 
+                    <CSVLink
+                      onClick={() => openNotificationWithIcon('warning')}
+                      data={this.state.data} 
+                      filename={"distributors-dealer.csv"}>
+                      Export to CSV
+                    </CSVLink>
+                    :null
+                    } 
+                  </Descriptions.Item>
                   
                 </Descriptions>
                 

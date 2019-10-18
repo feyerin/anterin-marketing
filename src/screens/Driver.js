@@ -84,29 +84,37 @@ export default class Driver extends Component {
     
     render(){
         return(
-        <Content
-            style={{
-            background: '#fff',
-            padding: 24,
-            margin: 0,
-            marginTop: 16,
-            minHeight: 280,
-          }}
-        >
-         <Table 
-          dataSource={this.state.data} 
-          pagination={this.state.pagination}
-          loading={this.state.loading}
-          onChange={this.handleTableChange}>
-          <Column title="name" dataIndex="name"  />
-          <Column title="phone" dataIndex="phone"  />
-          <Column title="gender" dataIndex="gender"  />
-          <Column title="address" dataIndex="address"  />          
-          <Column title="token" dataIndex="token"  />
-          </Table>
-        </Content>
+        <div>
+          <Breadcrumb style={{padding:5}}>
+            <Breadcrumb.Item>
+              <Icon type="idcard" />
+              <span>Distributor</span>
+            </Breadcrumb.Item>
+          </Breadcrumb>    
+          <Content
+              style={{
+              background: '#fff',
+              padding: 24,
+              margin: 0,
+              marginTop: 16,
+              minHeight: 280,
+            }}
+          >
+          <Table 
+            dataSource={this.state.data} 
+            pagination={this.state.pagination}
+            loading={this.state.loading}
+            onChange={this.handleTableChange}>
+            <Column title="name" dataIndex="name"  />
+            <Column title="phone" dataIndex="phone"  />
+            <Column title="gender" dataIndex="gender"  />
+            <Column title="address" dataIndex="address"  />          
+            <Column title="token" dataIndex="token"  />
+            </Table>
+          </Content>
+        </div>
         );
-
+          
         
     }
 }

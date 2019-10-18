@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Layout,Table,Breadcrumb,Icon } from "antd";
+import { Layout,Table,Breadcrumb,Icon,Input,Divider,Button } from "antd";
 import axios from 'axios';
 import DetailColumn from "../screens/Dealer/DetailColumn";
 
@@ -21,7 +21,8 @@ export class Dealer extends Component {
     pagination : {
       current : 1
     },
-    loading : false
+    loading : false,
+    searchValue:"",
   };
 
   componentDidMount() {
@@ -30,12 +31,24 @@ export class Dealer extends Component {
 
   handleTableChange = (pagination) => {
     const pager = { ...this.state.pagination };
-    console.log("PAGER", pager);
     pager.current = pagination.current;
     this.setState({
       ...this.state,
       pagination: pager
     },() => this.fetch());    
+  }
+
+  getSearchValue = (e) => {
+    this.setState({
+      ...this.state,
+      searchValue: e.target.value
+    })
+    console.log(e.target.value)
+  }
+
+  onClicked = () => {
+    console.log(this)
+    this.search(this.state.searchValue)
   }
 
   fetch = () => {
@@ -44,7 +57,7 @@ export class Dealer extends Component {
       loading: true });
     console.log("current page", this.state.pagination.current)
     axios.get(
-      "https://oapi.anterin.id/api/v1/marketing/dealers?page="+ this.state.pagination.current,
+      "https://oapi.anterin.id/api/v1/marketing/dealers?search=&page="+ this.state.pagination.current,
       {
       headers : {
         Authorization: "Bearer "+ localStorage.getItem("token")
@@ -78,6 +91,42 @@ export class Dealer extends Component {
     })
   }
 
+  search = () => {
+    this.setState({ 
+      ...this.state,
+      loading: true });
+    console.log("current page", this.state.pagination.current)
+    axios.get(
+      "https://oapi.anterin.id/api/v1/marketing/dealers?search="+ this.state.searchValue +"&sort=name&includes=",
+      {
+      headers : {
+        Authorization: "Bearer "+ localStorage.getItem("token")
+      }
+      
+    }).then(response => {
+      
+      console.log(response);
+      var newArray = [];
+      response.data.data.forEach(item => {
+        item.key = item.id;
+        if (item.balance.code === 401){
+          item.token = "user not registered"
+        }else{
+          item.token = item.balance.data.token
+        }
+        newArray.push(item);
+      });
+      this.setState({
+        ...this.state,
+        data: newArray,
+        loading: false,
+      });
+    })
+    .catch(function(error) {
+      console.log(error);
+    })
+  }
+
   render() {
     return (
       <div>
@@ -93,9 +142,23 @@ export class Dealer extends Component {
             background: '#fff',
             padding: 24,
             margin: 0,
-            minHeight: 1000,
+            minHeight: 280,
           }}
         >
+        <Input style={{width:200}}
+            prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
+            placeholder="search text value"
+            onChange={(e) => this.getSearchValue(e)}
+            />
+            <Divider type="vertical"/>
+            <Button
+              type="primary"
+              shape="circle"
+              icon="search"
+              onClick={() => this.onClicked()}
+              loading={this.state.loading}
+            ></Button>
+            <Divider/>
         <Table 
           dataSource={this.state.data}
           pagination={this.state.pagination} 

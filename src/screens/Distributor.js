@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Table,Layout,Breadcrumb,Icon,Divider} from "antd";
+import {Table,Layout,Breadcrumb,Icon,Divider,Tooltip,Input,Button} from "antd";
 import axios from "axios";
 import {URL} from "../components/BaseUrl";
 import DetailColumn from "../screens/Distributor/DetailColumn";
@@ -20,11 +20,16 @@ export default class Distributor extends Component {
     state = {
         data : [],
         loading : false,
+        searchValue: "",
       };
 
-    componentDidMount(){
+      componentDidMount(){
+        this.fetch();
+      }
+
+      fetch = () =>{
       this.setState({ loading: true });
-      axios.get(URL + "/api/v1/marketing/distributors?search=&sort=-balance",
+      axios.get(URL + "/api/v1/marketing/distributors?search=" + this.state.searchValue +"&sort=-balance",
       {
         headers : {
           Authorization : 'Bearer ' + localStorage.getItem("token")
@@ -32,7 +37,7 @@ export default class Distributor extends Component {
       })
       .then(response => {
         console.log(response);
-        console.log('try');
+        console.log("seach value :", this.state.searchValue)
         var newArray = [];
         response.data.data.forEach(item => {
           item.key = item.id;
@@ -41,7 +46,6 @@ export default class Distributor extends Component {
           }else{
             item.token = item.balance.data.token
           }
-          console.log("status code", item.balance.code)
           newArray.push(item);
         });
         this.setState({
@@ -51,9 +55,21 @@ export default class Distributor extends Component {
         });
       })
       .catch(function(error) {
-        console.log(localStorage.getItem("token"));
         console.log(error);
       })
+    }
+
+    getSearchValue = (e) => {
+      this.setState({
+        ...this.state,
+        searchValue: e.target.value
+      })
+      console.log(e.target.value)
+    }
+
+    onClicked = () => {
+      console.log(this)
+      this.fetch(this.state.searchValue)
     }
 
     render(){
@@ -73,7 +89,27 @@ export default class Distributor extends Component {
               minHeight: 280,
             }}
             >
-            <CSVLink style={{float:"right"}} data={this.state.data}>Export to CSV</CSVLink>
+            <Tooltip title="wait until data fully loaded">
+              <CSVLink 
+                style={{float:"right"}} 
+                data={this.state.data}
+                filename={"list-distributors.csv"}>
+                Export to CSV 
+              </CSVLink>
+            </Tooltip>
+            <Input style={{width:200}}
+            prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
+            placeholder="search text value"
+            onChange={(e) => this.getSearchValue(e)}
+            />
+            <Divider type="vertical"/>
+            <Button
+              type="primary"
+              shape="circle"
+              icon="search"
+              onClick={() => this.onClicked()}
+              loading={this.state.loading}
+            ></Button>
             <Divider/>
             <Table 
               dataSource={this.state.data} 

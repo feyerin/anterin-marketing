@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const { Column } = Table;
 const { Content } = Layout;
-const { Search } = Input;
+
 
 export class Home extends Component {
   //verivikator login
@@ -84,11 +84,9 @@ export class Home extends Component {
           style={{
             background: '#fff',
             padding: 24,
-            margin: 0,
             minHeight: 280,
           }}
         >
-          <Divider/>
         <Table 
           onChange={this.handleTableChange}
           dataSource={this.state.data}
