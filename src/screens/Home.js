@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Layout,Table, Breadcrumb, Icon, Input, Divider } from "antd";
+import { Layout,Table, Breadcrumb, Icon } from "antd";
 import axios from 'axios';
 
 const { Column } = Table;

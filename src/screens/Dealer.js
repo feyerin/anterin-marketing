@@ -146,19 +146,19 @@ export class Dealer extends Component {
           }}
         >
         <Input style={{width:200}}
-            prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
-            placeholder="search text value"
-            onChange={(e) => this.getSearchValue(e)}
-            />
-            <Divider type="vertical"/>
-            <Button
-              type="primary"
-              shape="circle"
-              icon="search"
-              onClick={() => this.onClicked()}
-              loading={this.state.loading}
-            ></Button>
-            <Divider/>
+          prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
+          placeholder="search text value"
+          onChange={(e) => this.getSearchValue(e)}
+        />
+        <Divider type="vertical"/>
+        <Button
+          type="primary"
+          shape="circle"
+          icon="search"
+          onClick={() => this.onClicked()}
+          loading={this.state.loading}
+        ></Button>
+          <Divider/>
         <Table 
           dataSource={this.state.data}
           pagination={this.state.pagination} 

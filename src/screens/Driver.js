@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import { Table,Layout,Breadcrumb,Icon} from "antd";
+import { Table,Layout,Breadcrumb,Icon,Input,Divider,Button} from "antd";
 import axios from "axios";
 import {URL} from "../components/BaseUrl";
-
 
 const { Content } = Layout;
 const { Column } = Table;
@@ -20,7 +19,8 @@ export default class Driver extends Component {
     pagination : {
       current : 1
     },
-    loading : false
+    loading : false,
+    searchValue:"",
   };          
   
   componentDidMount() {
@@ -38,8 +38,20 @@ export default class Driver extends Component {
     },() => this.fetch());    
   }
 
+  getSearchValue = (e) => {
+    this.setState({
+      ...this.state,
+      searchValue: e.target.value
+    })
+    console.log(e.target.value)
+  }
+
+  onClicked = () => {
+    console.log(this)
+    this.search(this.state.searchValue)
+  }
+
   fetch = () => {
-    //nampilin loading
     this.setState({ 
       ...this.state,
       loading: true });
@@ -47,13 +59,10 @@ export default class Driver extends Component {
     axios.get(
       URL + "api/v1/marketing/drivers?search=&sort=name&includes=&page=" + this.state.pagination.current,
       {
-      //tambahin token
       headers : {
         Authorization: "Bearer "+ localStorage.getItem("token")
       }
-      
     }).then(response => {
-      
       console.log(response);
       const pagination = { ...this.state.pagination };
       console.log("total page :", this.state.data)
@@ -67,7 +76,6 @@ export default class Driver extends Component {
         }else{
           item.token = item.balance.data.token
         }
-        console.log('photo source', item.photo);
         newArray.push(item);
       });
       this.setState({
@@ -81,14 +89,50 @@ export default class Driver extends Component {
       console.log(error);
     })
   }
+
+  search = () => {
+    this.setState({ 
+      ...this.state,
+      loading: true });
+    console.log("current page", this.state.pagination.current)
+    axios.get(
+      "https://oapi.anterin.id/api/v1/marketing/drivers?search="+ this.state.searchValue +"&sort=name&includes=",
+      {
+      headers : {
+        Authorization: "Bearer "+ localStorage.getItem("token")
+      }
+      
+    }).then(response => {
+      
+      console.log(response);
+      var newArray = [];
+      response.data.data.forEach(item => {
+        item.key = item.id;
+        if (item.balance.code === 401){
+          item.token = "user not registered"
+        }else{
+          item.token = item.balance.data.token
+        }
+        newArray.push(item);
+      });
+      this.setState({
+        ...this.state,
+        data: newArray,
+        loading: false,
+      });
+    })
+    .catch(function(error) {
+      console.log(error);
+    })
+  }
     
     render(){
         return(
         <div>
           <Breadcrumb style={{padding:5}}>
             <Breadcrumb.Item>
-              <Icon type="idcard" />
-              <span>Distributor</span>
+              <Icon type="user" />
+              <span>Drivers</span>
             </Breadcrumb.Item>
           </Breadcrumb>    
           <Content
@@ -96,10 +140,23 @@ export default class Driver extends Component {
               background: '#fff',
               padding: 24,
               margin: 0,
-              marginTop: 16,
               minHeight: 280,
             }}
           >
+          <Input style={{width:200}}
+            prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
+            placeholder="search text value"
+            onChange={(e) => this.getSearchValue(e)}
+            />
+            <Divider type="vertical"/>
+            <Button
+              type="primary"
+              shape="circle"
+              icon="search"
+              onClick={() => this.onClicked()}
+              loading={this.state.loading}>
+            </Button>   
+          <Divider/>
           <Table 
             dataSource={this.state.data} 
             pagination={this.state.pagination}
@@ -113,8 +170,6 @@ export default class Driver extends Component {
             </Table>
           </Content>
         </div>
-        );
-          
-        
+        ); 
     }
 }
