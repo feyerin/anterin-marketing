@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { Table,Layout,Tabs,Breadcrumb,Icon,Descriptions,Button, Divider,notification } from 'antd';
 import axios from 'axios';
 import { CSVLink } from "react-csv";
+import ReactExport from "react-data-export";
 
-
-
+const ExcelFile = ReactExport.ExcelFile;
+const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
+const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 const { Column } = Table;
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -17,26 +19,27 @@ const openNotificationWithIcon = type => {
 };
 
 export default class DistributorDetail extends Component {
+  
     constructor(props) {
         super(props)
-        console.log("TES PASSING DATA", props.location.state)
+        let modifiedData = props.location.state
         if (props.location.state.balance.code === 401){
-          this.container = "user not registered"
+         modifiedData.token = "user not registered"
        }else{
-           this.container = props.location.state.balance.data.token
+           modifiedData.token = props.location.state.balance.data.token
        }
-       console.log("TES PASSING DATA", this.container)
+        this.state = {
+          data : [],
+          dataFromOtherComponent : modifiedData,
+          drivers:[],
+          pagination : {
+              current : 1
+            },
+          loading: false,
+          showMe: false,
+          dataToExport:[],
+        };
     }
-
-    state = {
-        data : [],
-        drivers:[],
-        pagination : {
-            current : 1
-          },
-        loading: false,
-        showMe: false
-      };
 
       handleTableChange = (pagination) => {
         const pager = { ...this.state.pagination };
@@ -66,7 +69,6 @@ export default class DistributorDetail extends Component {
         this.setState({ 
           ...this.state,
           loading: true });
-        console.log("current page dealers", this.state.pagination.current)
         axios.get(
           "https://oapi.anterin.id/api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers?page='
           + this.state.pagination.current,
@@ -74,11 +76,10 @@ export default class DistributorDetail extends Component {
           headers : {
             Authorization: "Bearer "+ localStorage.getItem("token")
           }
-          
         }).then(response => {
           console.log(response);
           const pagination = { ...this.state.pagination };
-          pagination.total = 500;
+          pagination.total = response.data.pagination.total;
           var newArray = [];
           response.data.data.forEach(item => {
             item.key = item.id;
@@ -105,7 +106,6 @@ export default class DistributorDetail extends Component {
         this.setState({ 
             ...this.state,
             loading: true });
-            console.log("page from drivers", this.state.pagination.current)
         const axios = require('axios');
         axios.get(
             "https://oapi.anterin.id/api/v1/marketing/distributors/" + this.props.location.state.id + '/drivers?page='
@@ -116,9 +116,7 @@ export default class DistributorDetail extends Component {
                 }
             }).then(response => {
                 const pagination = { ...this.state.pagination };
-                pagination.total = 1000;
-                console.log('pagination state drivers2', this.state.pagination.current);
-                console.log('drivers from distributor ', response.data.data);
+                pagination.total = response.data.pagination.total;
                 var newArray = [];
                 response.data.data.forEach(item => {
                     item.key = item.id;
@@ -143,6 +141,8 @@ export default class DistributorDetail extends Component {
 
     ExportDealer = () => {
       this.setState({ loading: true });
+      var self = this
+      var newArray = [];
       axios.get(
         "https://oapi.anterin.id/api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers?limit=50'
         + this.state.pagination.current,
@@ -151,8 +151,18 @@ export default class DistributorDetail extends Component {
           Authorization: "Bearer "+ localStorage.getItem("token")
         }
       }).then(response => {
-        console.log("response", response);
-        var newArray = [];
+        console.log(response)
+        let dataSet1 =[
+          {
+            name:this.state.dataFromOtherComponent.name,
+            phone:this.state.dataFromOtherComponent.phone,
+            address:this.state.dataFromOtherComponent.address,
+            dealers_total:this.state.dataFromOtherComponent.dealers_total,
+            agents_total:this.state.dataFromOtherComponent.agents_total,
+            drivers_total:this.state.dataFromOtherComponent.drivers_total,
+            token:this.state.dataFromOtherComponent.token
+          }
+        ]
         response.data.data.forEach(item => {
           item.key = item.id;
           if (item.balance.code === 401){
@@ -161,15 +171,14 @@ export default class DistributorDetail extends Component {
             item.token = item.balance.data.token
           }
           newArray.push(item);
-        });
-        this.setState({
-          ...this.state,
+        },()=> console.log("dataset1:", this.dataSet1));
+        self.setState({
+          ...self.state,
+          dataToExport: dataSet1,
           data: newArray,
           loading:false,
           showMe:true
-
         });
-        console.log("data  :", this.state.data)
       })
       .catch(function(error) {
         console.log(error);
@@ -194,17 +203,15 @@ export default class DistributorDetail extends Component {
                     padding: 24,
                     margin: 0,
                     minHeight: 280,
-                }}
-            >
-
+                }}>
                 <Descriptions title="Distributor Info" size="small" column={2}>
-                  <Descriptions.Item label="name">{this.props.location.state.name}                    </Descriptions.Item>
-                  <Descriptions.Item label="dealers total">{this.props.location.state.dealers_total}  </Descriptions.Item>
-                  <Descriptions.Item label="token"><a> {this.container}</a>                           </Descriptions.Item>
-                  <Descriptions.Item label="agents total">{this.props.location.state.agents_total}    </Descriptions.Item>
-                  <Descriptions.Item label="phone">{this.props.location.state.phone}                  </Descriptions.Item>
-                  <Descriptions.Item label="drivers total">{this.props.location.state.drivers_total}  </Descriptions.Item>
-                  <Descriptions.Item label="address">{this.props.location.state.address}              </Descriptions.Item>
+                  <Descriptions.Item label="name">{this.state.dataFromOtherComponent.name}                    </Descriptions.Item>
+                  <Descriptions.Item label="dealers total">{this.state.dataFromOtherComponent.dealers_total}  </Descriptions.Item>
+                  <Descriptions.Item label="token"><a> {this.state.dataFromOtherComponent.token}</a>          </Descriptions.Item>
+                  <Descriptions.Item label="agents total">{this.state.dataFromOtherComponent.agents_total}    </Descriptions.Item>
+                  <Descriptions.Item label="phone">{this.state.dataFromOtherComponent.phone}                  </Descriptions.Item>
+                  <Descriptions.Item label="drivers total">{this.state.dataFromOtherComponent.drivers_total}  </Descriptions.Item>
+                  <Descriptions.Item label="address">{this.state.dataFromOtherComponent.address}              </Descriptions.Item>
                   <Descriptions.Item label="Export Dealer">  
                     <Button type="primary" size="small" 
                       onClick={this.ExportDealer}
@@ -214,18 +221,36 @@ export default class DistributorDetail extends Component {
                     <Divider type="vertical"/>
                     {
                      this.state.showMe? 
-                    <CSVLink
-                      onClick={() => openNotificationWithIcon('warning')}
-                      data={this.state.data} 
-                      filename={"distributors-dealer.csv"}>
-                      Export to CSV
-                    </CSVLink>
+                    // <CSVLink
+                    //   onClick={() => openNotificationWithIcon('warning')}
+                    //   data={this.state.data}
+                    //   filename={"my-file.csv"}
+                    // >Export to CSV</CSVLink>
+                    <ExcelFile 
+                      filename="distributors" 
+                      element={<Button size="small">export to Excel</Button>}>
+                    <ExcelSheet data={this.state.dataToExport} name="distributors" >
+                        <ExcelColumn label="Name" value="name"/>
+                        <ExcelColumn label="phone" value="phone"/>
+                        <ExcelColumn label="address" value="address"/>
+                        <ExcelColumn label="dealers total" value="deales_total"/>
+                        <ExcelColumn label="agents total" value="agents_total"/>
+                        <ExcelColumn label="drivers total" value="drivers_total"/>
+                        <ExcelColumn label="token" value="token"/>
+                    </ExcelSheet>
+                    <ExcelSheet data={this.state.data} name="dealers" >
+                    <ExcelColumn label="Name" value="name"/>
+                        <ExcelColumn label="phone" value="phone"/>
+                        <ExcelColumn label="address" value="address"/>
+                        <ExcelColumn label="drivers total" value="drivers_total"/>
+                        <ExcelColumn label="token" value="token"/>
+                    </ExcelSheet>
+                    </ExcelFile>
                     :null
                     } 
                   </Descriptions.Item>
-                  
                 </Descriptions>
-                
+        
                 <Tabs defaultActiveKey="1" onChange={this.onSwichDrivers}>
                     <TabPane tab="Dealer" key="1">
                         <Table 

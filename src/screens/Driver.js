@@ -30,7 +30,6 @@ export default class Driver extends Component {
   handleTableChange = (pagination) => {
     const pager = { ...this.state.pagination };
     console.log("PAGER", pager);
-   
     pager.current = pagination.current;
     this.setState({
       ...this.state,
@@ -65,9 +64,8 @@ export default class Driver extends Component {
     }).then(response => {
       console.log(response);
       const pagination = { ...this.state.pagination };
-      console.log("total page :", this.state.data)
-      pagination.total = 500000;
-      console.log('pagination state', this.state.pagination);
+      pagination.total = response.data.pagination.total;
+      console.log('total data', pagination.total);
       var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;

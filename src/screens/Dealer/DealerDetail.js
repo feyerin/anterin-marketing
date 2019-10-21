@@ -67,7 +67,7 @@ export default class AgenDetail extends Component {
         }).then(response => {
           console.log(response);
           const pagination = { ...this.state.pagination };
-          pagination.total = 500;
+          pagination.total = response.data.pagination.total;
           var newArray = [];
           response.data.data.forEach(item => {
             item.key = item.id;
@@ -107,7 +107,7 @@ export default class AgenDetail extends Component {
                 console.log('NESTEDCALLAPI ', response.data.data);
                 console.log("current page drivers", this.state.pagination.current)
                 const pagination = { ...this.state.pagination };
-                pagination.total = 1000;
+                pagination.total = response.data.pagination.total;
                 var newArray = [];
                 response.data.data.forEach(item => {
                     item.key = item.id;
