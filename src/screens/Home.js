@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { Layout,Table, Breadcrumb, Icon } from "antd";
 import axios from 'axios';
+import DetailColumn from "../screens/Spread/DetailColumn";
 
 const { Column } = Table;
 const { Content } = Layout;
-
 
 export class Home extends Component {
   //verivikator login
@@ -42,7 +42,7 @@ export class Home extends Component {
     this.setState({ 
       ...this.state,
       loading: true });
-    console.log("ONREQUEST", this.state)
+    console.log("ONREQUEST", this.state.data.id)
     axios.get(
       "https://oapi.anterin.id/api/v1/marketing/spread?page="+ this.state.pagination.current,
       {
@@ -85,20 +85,22 @@ export class Home extends Component {
             background: '#fff',
             padding: 24,
             minHeight: 280,
-          }}
-        >
+          }}>
         <Table 
           onChange={this.handleTableChange}
           dataSource={this.state.data}
           pagination={this.state.pagination} 
-          loading={this.state.loading}
-          >   
+          loading={this.state.loading}>   
           <Column title="name" dataIndex="name"  />
           <Column title="distributors" dataIndex="distributors"  />
           <Column title="dealers total" dataIndex="dealers_total"  />
           <Column title="agent total" dataIndex="agents_total"  />
           <Column title="drivers total" dataIndex="drivers_total" />
-          
+          <Column title="detail" dataIndex="detail" 
+            render={
+              (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>
+            }>
+          </Column> 
           </Table>
         </Content>
 

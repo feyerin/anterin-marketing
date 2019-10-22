@@ -1,15 +1,16 @@
 import React, { Component } from "react";
-import { Table, Button } from "antd";
-
-const { Column } = Table;
+import { Button } from "antd";
 
 export default class DetailColumn extends Component {
     state = {
-        userData: {}
+        userData: {},
+        loading:false
     }
     onDetail = () => {
+        this.setState({ loading: true });
         const axios = require('axios');
-        axios.get("https://oapi.anterin.id/api/v1/marketing/spread" + this.props.data.id,
+        console.log('data.id :', this.props.data.id)
+        axios.get("https://oapi.anterin.id/api/v1/marketing/spread/" + this.props.data.province_id,
             {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem("token")
@@ -26,7 +27,6 @@ export default class DetailColumn extends Component {
                 console.log(error);
             });
     }
-
 
     render() {
         return (

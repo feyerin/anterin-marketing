@@ -215,8 +215,9 @@ export default class AgenDetail extends Component {
                     {
                      this.state.showMe? 
                     <ExcelFile 
+                      
                       filename="dealers" 
-                      element={<Button size="small">export to Excel</Button>}>
+                      element={<Button size="small" onClick={() => openNotificationWithIcon('warning')}>export to Excel</Button>}>
                     <ExcelSheet data={this.state.dataToExport} name="distributors" >
                         <ExcelColumn label="Name" value="name"/>
                         <ExcelColumn label="phone" value="phone"/>

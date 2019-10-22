@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { Layout,Table,Breadcrumb,Icon,Input,Divider,Button } from "antd";
 import axios from 'axios';
-import DetailColumn from './DetailColumn';
+import DetailColumn from './Agent/DetailColumn';
 
 const { Column } = Table;
 const { Content } = Layout;
 
-export class Agen extends Component {
+export class Agent extends Component {
   //Login verivikator
   constructor(props){
     super(props);
@@ -87,7 +87,6 @@ export class Agen extends Component {
     })
   }
 
-
   search = () => {
     this.setState({ 
       ...this.state,
@@ -157,18 +156,16 @@ export class Agen extends Component {
             dataSource={this.state.data} 
             pagination={this.state.pagination} 
             loading={this.state.loading}
-            onChange={this.handleTableChange}
-            >
+            onChange={this.handleTableChange}>
             <Column title="name" dataIndex="name"  />
             <Column title="phone" dataIndex="phone"  />
             <Column title="address" dataIndex="address"  />
             <Column title="drivers total" dataIndex="drivers_total"  />
             <Column title="token" dataIndex="token"  />
             <Column title="detail" dataIndex="detail" 
-          render={
-            (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>
-          }
-          > 
+              render={
+                (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>
+              }> 
           </Column>
           </Table>
         </Content>
@@ -177,4 +174,4 @@ export class Agen extends Component {
   }
 }
 
-export default Agen;
+export default Agent;

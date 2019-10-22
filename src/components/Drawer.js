@@ -3,34 +3,32 @@ import { Layout, Icon, Menu, Modal } from "antd";
 import { Link } from "react-router-dom";
 
 const { Sider } = Layout;
-//logout
 const { confirm } = Modal;
-
-
-
 
 export default class Drawer extends Component {
   state = {
     collapsed: false
   };
-
+  //clear token from localStorage
   onOkay = () => {
     localStorage.clear()
     this.props.customProps.push('/')
     console.log('token:', localStorage.clear() )
   }
+
+  //for pop-up logout confirmation
   showConfirm = () => {
     confirm({
       title: 'Logout',
       content: 'are you sure want to logout?',
-      onOk: () => this.onOkay()
-      ,
+      onOk: () => this.onOkay(),
       onCancel() {
         console.log('Cancel');
       },
     });
   }
 
+  //sidebar span
   onCollapse = collapsed => {
     console.log(collapsed);
     this.setState({ collapsed });
@@ -41,8 +39,7 @@ export default class Drawer extends Component {
       <Sider
         collapsible
         collapsed={this.state.collapsed}
-        onCollapse={this.onCollapse}
-      >
+        onCollapse={this.onCollapse}>
         <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
           <Menu.Item key="1">
             <Link to="/home">
@@ -63,7 +60,7 @@ export default class Drawer extends Component {
             </Link>
           </Menu.Item>
           <Menu.Item key="4">
-            <Link to="/Agen">
+            <Link to="/Agent">
               <Icon type="book" />
               <span>Agent</span>
             </Link>
@@ -94,5 +91,4 @@ export default class Drawer extends Component {
       </Sider>
     );
   }
-
 }

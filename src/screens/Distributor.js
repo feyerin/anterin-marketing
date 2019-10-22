@@ -122,9 +122,9 @@ export default class Distributor extends Component {
               <Column title="dealers total" dataIndex="dealers_total"  />
               <Column title="token" dataIndex="token"  />
               <Column title="detail" dataIndex="detail" 
-            render={
-              (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>
-            }
+                render={
+                  (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>
+                }
             > 
             </Column>
             </Table>,

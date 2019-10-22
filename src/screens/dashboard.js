@@ -8,7 +8,7 @@ import Navbar from "../components/Navbar";
 import Distributor from "../screens/Distributor";
 import Driver from "./Driver";
 import Dealer from "./Dealer";
-import Agen from "./Agen";
+import Agent from "./Agent";
 import Logout from "./Logout";
 
 const { Content } = Layout;
@@ -29,7 +29,7 @@ export default class dashboard extends Component {
             <Route path="/Distributor" component={Distributor} />
             <Route path="/Driver" component={Driver} />
             <Route path="/Dealer" component={Dealer} />
-            <Route path="/Agen" component={Agen} />
+            <Route path="/Agen" component={Agent} />
             <Route path="/Logout" component={Logout} />
           </Content>
         </Layout>

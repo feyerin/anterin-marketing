@@ -8,13 +8,13 @@ import Navbar from "./components/Navbar";
 import Distributor from "./screens/Distributor";
 import Driver from "./screens/Driver";
 import Dealer from "./screens/Dealer";
-import Agen from "./screens/Agen";
+import Agent from "./screens/Agent";
 import Login from "./screens/Login";
 import Logout from "./screens/Logout";
-import dashboard from "./screens/dashboard";
-import AgenDetail from "./screens/AgenDetail";
+import AgenDetail from "./screens/Agent/AgenDetail";
 import DealerDetail from "./screens/Dealer/DealerDetail";
 import DistributorDetail from "./screens/Distributor/DistributorDetail";
+import SpreadDetail from "./screens/Spread/SpreadDetail";
 
 const { Content } = Layout;
 
@@ -23,7 +23,6 @@ class App extends Component {
   return (
     <Switch>
         <Route exact path="/" component={Login}/>
-        <Route path="/dashboard" component={dashboard}/>
        <Layout style={{ minHeight: "100vh" }}>
       <Drawer customProps={this.props.history}/>
       <Layout>
@@ -31,12 +30,13 @@ class App extends Component {
       <Navbar/>
           <Content style={{ margin: '0 16px' }}>
             <Route path="/Home" component={Home}/>
+            <Route path="/SpreadDetail" component={SpreadDetail}/>
             <Route path="/Distributor" component={Distributor}/>
             <Route path="/DistributorDetail" component={DistributorDetail}/>
             <Route path="/Driver" component={Driver}/>
             <Route path="/Dealer" component={Dealer}/>
             <Route path="/DealerDetail" component={DealerDetail}/>
-            <Route path="/Agen" component={Agen}/>
+            <Route path="/Agent" component={Agent}/>
             <Route path="/AgenDetail" component={AgenDetail}/>
             <Route path="/Logout" component={Logout}/>
 

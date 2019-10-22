@@ -18,7 +18,6 @@ const openNotificationWithIcon = type => {
 };
 
 export default class DistributorDetail extends Component {
-  
     constructor(props) {
         super(props)
         let modifiedData = props.location.state
@@ -220,9 +219,10 @@ export default class DistributorDetail extends Component {
                     <Divider type="vertical"/>
                     {
                      this.state.showMe? 
-                    <ExcelFile 
+                    <ExcelFile
+                      
                       filename="distributors" 
-                      element={<Button size="small">export to Excel</Button>}>
+                      element={<Button size="small" onClick={() => openNotificationWithIcon('warning')}>export to Excel</Button>}>
                     <ExcelSheet data={this.state.dataToExport} name="distributors" >
                         <ExcelColumn label="Name" value="name"/>
                         <ExcelColumn label="phone" value="phone"/>
