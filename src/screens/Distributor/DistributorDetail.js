@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Table,Layout,Tabs,Breadcrumb,Icon,Descriptions,Button, Divider,notification } from 'antd';
 import axios from 'axios';
-import { CSVLink } from "react-csv";
 import ReactExport from "react-data-export";
 
 const ExcelFile = ReactExport.ExcelFile;
@@ -216,16 +215,11 @@ export default class DistributorDetail extends Component {
                     <Button type="primary" size="small" 
                       onClick={this.ExportDealer}
                       loading={this.state.loading}> 
-                      genetate data
+                      generate data
                     </Button>
                     <Divider type="vertical"/>
                     {
                      this.state.showMe? 
-                    // <CSVLink
-                    //   onClick={() => openNotificationWithIcon('warning')}
-                    //   data={this.state.data}
-                    //   filename={"my-file.csv"}
-                    // >Export to CSV</CSVLink>
                     <ExcelFile 
                       filename="distributors" 
                       element={<Button size="small">export to Excel</Button>}>
@@ -239,7 +233,7 @@ export default class DistributorDetail extends Component {
                         <ExcelColumn label="token" value="token"/>
                     </ExcelSheet>
                     <ExcelSheet data={this.state.data} name="dealers" >
-                    <ExcelColumn label="Name" value="name"/>
+                        <ExcelColumn label="Name" value="name"/>
                         <ExcelColumn label="phone" value="phone"/>
                         <ExcelColumn label="address" value="address"/>
                         <ExcelColumn label="drivers total" value="drivers_total"/>

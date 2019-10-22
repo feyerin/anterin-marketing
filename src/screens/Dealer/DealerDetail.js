@@ -1,36 +1,46 @@
 import React, { Component } from 'react';
-import { Table,Layout,Tabs,Breadcrumb,Icon,Descriptions } from 'antd';
+import { Table,Layout,Tabs,Breadcrumb,Icon,Descriptions,notification,Button,Divider } from 'antd';
 import axios from 'axios';
+import ReactExport from "react-data-export";
 
-
+const ExcelFile = ReactExport.ExcelFile;
+const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
+const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 const { Column } = Table;
 const { Content } = Layout;
 const { TabPane } = Tabs;
+const openNotificationWithIcon = type => {
+  notification[type]({
+    message: 'attention',
+    description:
+      'always click generate button before exporting data to CSV or the data will be not complete',
+  });
+};
 
 export default class AgenDetail extends Component {
     constructor(props) {
         super(props)
-        console.log("TES PASSING DATA", props.location.state)
-        if (props.location.state.balance.code === 401){
+        let modifiedData = props.location.state
+        if (modifiedData.balance.code === 401){
           this.container = "user not registered"
        }else{
-           this.container = props.location.state.balance.data.token
+           this.container = modifiedData.balance.data.token
        }
-       console.log("TES PASSING DATA", this.container)
-    }
-
-    state = {
+       this.state = {
         data : [],
+        dataFromOtherComponent : modifiedData,
         drivers:[],
         pagination : {
             current : 1
           },
         loading: false,
+        showMe: false,
+        dataToExport:[],
       };
+    }
       
       handleTableChange = (pagination) => {
         const pager = { ...this.state.pagination };
-        console.log("PAGER", pager);
         pager.current = pagination.current;
         this.setState({
           ...this.state,
@@ -40,7 +50,6 @@ export default class AgenDetail extends Component {
 
       handleTableDriversChange = (pagination) => {
         const pager = { ...this.state.pagination };
-        console.log("PAGER", pager);
         pager.current = pagination.current;
         this.setState({
           ...this.state,
@@ -56,7 +65,6 @@ export default class AgenDetail extends Component {
         this.setState({ 
           ...this.state,
           loading: true });
-        console.log("current page dealer", this.state.pagination.current)
         axios.get(
           "https://oapi.anterin.id/api/v1/marketing/dealers/" + this.props.location.state.id + '/agents?page='
           + this.state.pagination.current,
@@ -76,7 +84,6 @@ export default class AgenDetail extends Component {
             }else{
               item.token = item.balance.data.token
             }
-            console.log("get token", item.balance.data.token)
             newArray.push(item);
           });
           this.setState({
@@ -95,7 +102,6 @@ export default class AgenDetail extends Component {
       this.setState({ 
         ...this.state,
         loading: true });
-        console.log("current page drivers", this.state.pagination.current)
         const axios = require('axios');
         axios.get("https://oapi.anterin.id/api/v1/marketing/dealers/" + this.props.location.state.id + '/drivers?page='
         + this.state.pagination.current,
@@ -104,8 +110,6 @@ export default class AgenDetail extends Component {
                     Authorization: 'Bearer ' + localStorage.getItem("token")
                 }
             }).then(response => {
-                console.log('NESTEDCALLAPI ', response.data.data);
-                console.log("current page drivers", this.state.pagination.current)
                 const pagination = { ...this.state.pagination };
                 pagination.total = response.data.pagination.total;
                 var newArray = [];
@@ -127,6 +131,51 @@ export default class AgenDetail extends Component {
             }).catch(function (error) {
                 console.log(error);
             });
+    }
+
+    ExportDealer = () => {
+      this.setState({ loading: true });
+      var self = this
+      var newArray = [];
+      axios.get(
+        "https://oapi.anterin.id/api/v1/marketing/dealers/" + this.props.location.state.id + '/agents?limit=100'
+        + this.state.pagination.current,
+        {
+        headers : {
+          Authorization: "Bearer "+ localStorage.getItem("token")
+        }
+      }).then(response => {
+        console.log(response)
+        let dataSet1 =[
+          {
+            name:this.state.dataFromOtherComponent.name,
+            phone:this.state.dataFromOtherComponent.phone,
+            address:this.state.dataFromOtherComponent.address,
+            agents_total:this.state.dataFromOtherComponent.agents_total,
+            drivers_total:this.state.dataFromOtherComponent.drivers_total,
+            token:this.container
+          }
+        ]
+        response.data.data.forEach(item => {
+          item.key = item.id;
+          if (item.balance.code === 401){
+            item.token = "user not registered"
+          }else{
+            item.token = item.balance.data.token
+          }
+          newArray.push(item);
+        },()=> console.log("dataset1:", this.dataSet1));
+        self.setState({
+          ...self.state,
+          dataToExport: dataSet1,
+          data: newArray,
+          loading:false,
+          showMe:true
+        });
+      })
+      .catch(function(error) {
+        console.log(error);
+      })
     }
 
     render() {
@@ -156,6 +205,37 @@ export default class AgenDetail extends Component {
                   <Descriptions.Item label="phone">{this.props.location.state.phone}                  </Descriptions.Item>
                   <Descriptions.Item label="drivers total">{this.props.location.state.drivers_total}  </Descriptions.Item>
                   <Descriptions.Item label="address">{this.props.location.state.address}              </Descriptions.Item>
+                  <Descriptions.Item label="Export Dealer">  
+                    <Button type="primary" size="small" 
+                      onClick={this.ExportDealer}
+                      loading={this.state.loading}> 
+                      generate data
+                    </Button>
+                    <Divider type="vertical"/>
+                    {
+                     this.state.showMe? 
+                    <ExcelFile 
+                      filename="dealers" 
+                      element={<Button size="small">export to Excel</Button>}>
+                    <ExcelSheet data={this.state.dataToExport} name="distributors" >
+                        <ExcelColumn label="Name" value="name"/>
+                        <ExcelColumn label="phone" value="phone"/>
+                        <ExcelColumn label="address" value="address"/>
+                        <ExcelColumn label="agents total" value="agents_total"/>
+                        <ExcelColumn label="drivers total" value="drivers_total"/>
+                        <ExcelColumn label="token" value="token"/>
+                    </ExcelSheet>
+                    <ExcelSheet data={this.state.data} name="dealers" >
+                        <ExcelColumn label="Name" value="name"/>
+                        <ExcelColumn label="phone" value="phone"/>
+                        <ExcelColumn label="address" value="address"/>
+                        <ExcelColumn label="drivers total" value="drivers_total"/>
+                        <ExcelColumn label="token" value="token"/>
+                    </ExcelSheet>
+                    </ExcelFile>
+                    :null
+                    } 
+                  </Descriptions.Item>
                 </Descriptions>
                 <Tabs defaultActiveKey="1"  onChange={this.handleTableDriversChange} >
                     <TabPane tab="Agents" key="1">
@@ -167,8 +247,8 @@ export default class AgenDetail extends Component {
                             <Column title="name" dataIndex="name"  />
                             <Column title="phone" dataIndex="phone"  />
                             <Column title="address" dataIndex="address"  />
-                            <Column title="token" dataIndex="token"/>
                             <Column title="drivers total" dataIndex="drivers_total"  />
+                            <Column title="token" dataIndex="token"/>
                         </Table>
                     </TabPane>
                     <TabPane tab="Drivers" key="2">
