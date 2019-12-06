@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import { Table,Layout,Breadcrumb,Icon,Input,Divider,Button} from "antd";
 import axios from "axios";
-import {URL} from "../components/BaseUrl";
 
 const { Content } = Layout;
 const { Column } = Table;
-export default class Driver extends Component {
+export default class FilterDriver extends Component {
   //Login verivikator
   constructor(props){
     super(props);
@@ -56,7 +55,7 @@ export default class Driver extends Component {
       loading: true });
     console.log("current page", this.state.pagination.current)
     axios.get(
-      URL + "api/v1/marketing/drivers?search=&sort=name&includes=&page=" + this.state.pagination.current,
+        "https://oapi.anterin.id/api/v1/marketing/drivers?search=&sort=name&includes=&page=" + this.state.pagination.current,
       {
       headers : {
         Authorization: "Bearer "+ localStorage.getItem("token")
@@ -69,8 +68,6 @@ export default class Driver extends Component {
       var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
-        item.created_at = item.created_at.date;
-        console.log('created_at :', item.created_at.date)
         if (item.balance.code === 401){
           item.token = "user not registered"
         }else{
@@ -108,7 +105,6 @@ export default class Driver extends Component {
       var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
-        item.created_at = item.created_at.date;
         if (item.balance.code === 401){
           item.token = "user not registered"
         }else{
@@ -166,8 +162,7 @@ export default class Driver extends Component {
             <Column title="name" dataIndex="name"  />
             <Column title="phone" dataIndex="phone"  />
             <Column title="gender" dataIndex="gender"  />
-            <Column title="address" dataIndex="address"  />   
-            <Column title="created at" dataIndex="created_at"/>       
+            <Column title="address" dataIndex="address"  />          
             <Column title="token" dataIndex="token"  />
             </Table>
           </Content>

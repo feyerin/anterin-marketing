@@ -256,6 +256,7 @@ export default class DistributorDetail extends Component {
                             <Column title="phone" dataIndex="phone"  />
                             <Column title="address" dataIndex="address"  />
                             <Column title="drivers total" dataIndex="drivers_total"  />
+                            <Column title="created at" dataIndex="created_at"/>
                             <Column title="token" dataIndex="token"  />
                         </Table>
                     </TabPane>
@@ -270,6 +271,7 @@ export default class DistributorDetail extends Component {
                             <Column title="email" dataIndex="email"  />
                             <Column title="gender" dataIndex="gender"  />
                             <Column title="address" dataIndex="address"  />
+                            <Column title="created at" dataIndex="created_at"/>
                             <Column title="token" dataIndex="token"  />
                         </Table>
                     </TabPane>

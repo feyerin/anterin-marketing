@@ -98,9 +98,8 @@ export class Home extends Component {
           <Column title="drivers total" dataIndex="drivers_total" />
           <Column title="detail" dataIndex="detail" 
             render={
-              (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>
-            }>
-          </Column> 
+              (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj} />
+            }/>
           </Table>
         </Content>
 

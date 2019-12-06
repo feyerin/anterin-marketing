@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Table,Layout,Breadcrumb,Icon,Input,Divider,Button} from "antd";
-import axios from "axios";
-import {URL} from "../components/BaseUrl";
+import { Layout,Table,Breadcrumb,Icon,Input,Divider,Button,Tooltip } from "antd";
+import axios from 'axios';
+import { CSVLink } from "react-csv";
 
-const { Content } = Layout;
 const { Column } = Table;
-export default class Driver extends Component {
+const { Content } = Layout;
+
+export class FilterAgent extends Component {
   //Login verivikator
   constructor(props){
     super(props);
@@ -21,7 +22,7 @@ export default class Driver extends Component {
     },
     loading : false,
     searchValue:"",
-  };          
+  };
   
   componentDidMount() {
     this.fetch();
@@ -33,7 +34,7 @@ export default class Driver extends Component {
     pager.current = pagination.current;
     this.setState({
       ...this.state,
-      pagination: pager,
+      pagination: pager
     },() => this.fetch());    
   }
 
@@ -54,9 +55,8 @@ export default class Driver extends Component {
     this.setState({ 
       ...this.state,
       loading: true });
-    console.log("current page", this.state.pagination.current)
     axios.get(
-      URL + "api/v1/marketing/drivers?search=&sort=name&includes=&page=" + this.state.pagination.current,
+      "https://oapi.anterin.id/api/v1/marketing/agents?page="+ this.state.pagination.current,
       {
       headers : {
         Authorization: "Bearer "+ localStorage.getItem("token")
@@ -64,13 +64,10 @@ export default class Driver extends Component {
     }).then(response => {
       console.log(response);
       const pagination = { ...this.state.pagination };
-      pagination.total = response.data.pagination.total;
-      console.log('total data', pagination.total);
+      pagination.total = 451;
       var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
-        item.created_at = item.created_at.date;
-        console.log('created_at :', item.created_at.date)
         if (item.balance.code === 401){
           item.token = "user not registered"
         }else{
@@ -94,9 +91,8 @@ export default class Driver extends Component {
     this.setState({ 
       ...this.state,
       loading: true });
-    console.log("current page", this.state.pagination.current)
     axios.get(
-      "https://oapi.anterin.id/api/v1/marketing/drivers?search="+ this.state.searchValue +"&sort=name&includes=",
+      "https://oapi.anterin.id/api/v1/marketing/agents?search="+ this.state.searchValue +"&sort=name&includes=",
       {
       headers : {
         Authorization: "Bearer "+ localStorage.getItem("token")
@@ -108,7 +104,6 @@ export default class Driver extends Component {
       var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
-        item.created_at = item.created_at.date;
         if (item.balance.code === 401){
           item.token = "user not registered"
         }else{
@@ -126,52 +121,61 @@ export default class Driver extends Component {
       console.log(error);
     })
   }
-    
-    render(){
-        return(
-        <div>
-          <Breadcrumb style={{padding:5}}>
+
+  render() {
+    return (
+      <div>
+        <Breadcrumb style={{padding:5}}>
             <Breadcrumb.Item>
-              <Icon type="user" />
-              <span>Drivers</span>
+              <Icon type="book" />
+              <span>Agent</span>
             </Breadcrumb.Item>
-          </Breadcrumb>    
-          <Content
-              style={{
-              background: '#fff',
-              padding: 24,
-              margin: 0,
-              minHeight: 280,
-            }}
-          >
-          <Input style={{width:200}}
-            prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
-            placeholder="search text value"
-            onChange={(e) => this.getSearchValue(e)}
-            />
-            <Divider type="vertical"/>
-            <Button
-              type="primary"
-              shape="circle"
-              icon="search"
-              onClick={() => this.onClicked()}
-              loading={this.state.loading}>
-            </Button>   
+        </Breadcrumb>
+        <Content
+          style={{
+            background: '#fff',
+            padding: 24,
+            margin: 0,
+            minHeight: 280,
+          }}>
+         <Input style={{width:200}}
+          prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
+          placeholder="search text value"
+          onChange={(e) => this.getSearchValue(e)}
+          />
+          <Divider type="vertical"/>
+          <Button
+            type="primary"
+            shape="circle"
+            icon="search"
+            onClick={() => this.onClicked()}
+            loading={this.state.loading}
+          ></Button>
+
+          <Tooltip title="wait until data fully loaded">
+              <CSVLink 
+                  style={{float:"right"}} 
+                  data={this.state.data}
+                  filename={"list-agent.csv"}>
+                  Export to CSV 
+              </CSVLink>
+          </Tooltip>   
           <Divider/>
           <Table 
             dataSource={this.state.data} 
-            pagination={this.state.pagination}
+            pagination={this.state.pagination} 
             loading={this.state.loading}
             onChange={this.handleTableChange}>
             <Column title="name" dataIndex="name"  />
             <Column title="phone" dataIndex="phone"  />
-            <Column title="gender" dataIndex="gender"  />
-            <Column title="address" dataIndex="address"  />   
-            <Column title="created at" dataIndex="created_at"/>       
+            <Column title="address" dataIndex="address"  />
+            <Column title="drivers total" dataIndex="drivers_total"  />
             <Column title="token" dataIndex="token"  />
-            </Table>
-          </Content>
-        </div>
-        ); 
-    }
+          </Table>
+        </Content>
+      </div>
+    );
+  }
 }
+
+export default FilterAgent;

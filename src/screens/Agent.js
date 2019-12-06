@@ -160,7 +160,7 @@ export class Agent extends Component {
             <Column title="name" dataIndex="name"  />
             <Column title="phone" dataIndex="phone"  />
             <Column title="address" dataIndex="address"  />
-            <Column title="drivers total" dataIndex="drivers_total"  />
+            <Column title="created at" dataIndex="created_at"/>
             <Column title="token" dataIndex="token"  />
             <Column title="detail" dataIndex="detail" 
               render={

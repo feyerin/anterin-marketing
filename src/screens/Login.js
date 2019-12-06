@@ -6,7 +6,7 @@ import { URL } from '../components/BaseUrl';
 import axios from 'axios';
 import { Form, Icon, Input, Button, Checkbox, message,Layout } from 'antd';
 import Particles from 'react-particles-js';
-import logo from "../assets/logo.png";
+import logo from "../assets/logo-anterin.png";
 
 const { Content } = Layout;
 export default class Login extends React.Component {

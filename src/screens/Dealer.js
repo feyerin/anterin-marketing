@@ -168,7 +168,7 @@ export class Dealer extends Component {
           <Column title="phone" dataIndex="phone"  />
           <Column title="email" dataIndex="email"  />
           <Column title="address" dataIndex="address"  />
-          <Column title="agents total" dataIndex="agents_total"  />
+          <Column title="created at" dataIndex="created_at"/>
           <Column title="token" dataIndex="token"/>
           <Column title="detail" dataIndex="detail" 
         render={

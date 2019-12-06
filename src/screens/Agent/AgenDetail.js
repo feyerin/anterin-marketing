@@ -80,6 +80,7 @@ export default class AgenDetail extends Component {
                   <Column title="name" dataIndex="name"  />
                   <Column title="phone" dataIndex="phone"  />
                   <Column title="address" dataIndex="address"  /> 
+                  <Column title="created at" dataIndex="created_at"/>
                   <Column title="token" dataIndex="token"/>
                 </Table>
             </Content>
