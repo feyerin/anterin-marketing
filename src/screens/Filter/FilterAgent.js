@@ -92,7 +92,7 @@ export class FilterAgent extends Component {
       ...this.state,
       loading: true });
     axios.get(
-      "https://oapi.anterin.id/api/v1/marketing/agents?search="+ this.state.searchValue +"&sort=name&includes=",
+      "https://oapi-rv.anterin.id/api/v1/marketing/agents?search="+ this.state.searchValue +"&sort=name&includes=",
       {
       headers : {
         Authorization: "Bearer "+ localStorage.getItem("token")

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Layout,Table, Breadcrumb, Icon } from "antd";
 import axios from 'axios';
 import DetailColumn from "../screens/Spread/DetailColumn";
+import { URL } from "../components/BaseUrl";
 
 const { Column } = Table;
 const { Content } = Layout;
@@ -44,7 +45,7 @@ export class Home extends Component {
       loading: true });
     console.log("ONREQUEST", this.state.data.id)
     axios.get(
-      "https://oapi.anterin.id/api/v1/marketing/spread?page="+ this.state.pagination.current,
+       URL + "api/v1/marketing/spread?page="+ this.state.pagination.current,
       {
       headers : {
         Authorization: "Bearer "+ localStorage.getItem("token")

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Layout,Table,Breadcrumb,Icon,Input,Divider,Button } from "antd";
 import axios from 'axios';
 import DetailColumn from './Agent/DetailColumn';
+import { URL } from "../components/BaseUrl";
 
 const { Column } = Table;
 const { Content } = Layout;
@@ -56,7 +57,7 @@ export class Agent extends Component {
       ...this.state,
       loading: true });
     axios.get(
-      "https://oapi.anterin.id/api/v1/marketing/agents?page="+ this.state.pagination.current,
+      URL + "api/v1/marketing/agents?page="+ this.state.pagination.current,
       {
       headers : {
         Authorization: "Bearer "+ localStorage.getItem("token")

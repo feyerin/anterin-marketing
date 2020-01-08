@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Table,Layout,Breadcrumb,Icon,Input,Divider,Button} from "antd";
 import axios from "axios";
-import {URL} from "../components/BaseUrl";
+import { URL } from "../components/BaseUrl";
 
 const { Content } = Layout;
 const { Column } = Table;
@@ -96,7 +96,7 @@ export default class Driver extends Component {
       loading: true });
     console.log("current page", this.state.pagination.current)
     axios.get(
-      "https://oapi.anterin.id/api/v1/marketing/drivers?search="+ this.state.searchValue +"&sort=name&includes=",
+      "https://oapi-rv.anterin.id/api/v1/marketing/drivers?search="+ this.state.searchValue +"&sort=name&includes=",
       {
       headers : {
         Authorization: "Bearer "+ localStorage.getItem("token")

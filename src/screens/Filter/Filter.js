@@ -3,19 +3,12 @@ import {Table,Layout,Breadcrumb,Icon,Divider,Tooltip,Input,Button, DatePicker} f
 import axios from "axios";
 import { CSVLink } from "react-csv";
 import { Link } from "react-router-dom";
+import { URL } from "../../components/BaseUrl";
+
 
 const { RangePicker } = DatePicker;
 const { Content } = Layout;
 const{Column} = Table;
-
-function onChange(value, dateString) {
-    console.log('Selected Time: ', value);
-    console.log('Formatted Selected Time: ', dateString);
-  }
-  
-  function onOk(value) {
-    console.log('onOk: ', value);
-  }
 
 export default class Filter extends Component {
   //Login verivikator
@@ -24,22 +17,24 @@ export default class Filter extends Component {
     if(localStorage.getItem("token") == null){
       this.props.history.push('/')
     }
+    this.state = {
+      data : [],
+      loading : false,
+      searchValue: "",
+      startValue: "",
+      endValue: "",
+      endOpen: false,
+      dateRange: "",
+    };
   }
-
-    state = {
-        data : [],
-        loading : false,
-        searchValue: "",
-        dateRange: "",
-      };
 
       componentDidMount(){
         this.fetch();
       }
 
     fetch = () =>{
-        this.setState({ loading: true });
-        axios.get("https://oapi.anterin.id/api/v1/marketing/distributors?search=" + this.state.searchValue +"&sort=-balance",
+        this.setState({ ...this.state, loading: true });
+        axios.get("https://oapi-rv.anterin.id/api/v1/marketing/distributors?search=" + this.state.searchValue +"&sort=name&includes=" + "&from=" + this.state.startValue + "&to=" + this.state.endValue, //disini. yaudah tinggal run
         {
             headers : {
             Authorization : 'Bearer ' + localStorage.getItem("token")
@@ -58,6 +53,7 @@ export default class Filter extends Component {
             }
             newArray.push(item);
             });
+          
             this.setState({
             ...this.state,
             data: newArray,
@@ -82,6 +78,31 @@ export default class Filter extends Component {
       this.fetch(this.state.searchValue)
     }
 
+    disabledStartDate = startValue => {
+      const { endValue } = this.state;
+      if (!startValue || !endValue) {
+        return false;
+      }
+      return startValue.valueOf() > endValue.valueOf();
+    };
+  
+    disabledEndDate = endValue => {
+      const { startValue } = this.state;
+      if (!endValue || !startValue) {
+        return false;
+      }
+      return endValue.valueOf() <= startValue.valueOf();
+    };
+    
+    onChange=(dates, dateStrings) => {
+      console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
+      this.setState({
+        ...this.state,
+        startValue : dateStrings[0],
+        endValue : dateStrings[1]
+      }, () =>  this.fetch())
+    }
+  
     render(){
         return(
           <div>
@@ -108,33 +129,28 @@ export default class Filter extends Component {
                 </CSVLink>
                 </Tooltip>
             
-                <Divider/>  
-
+                <Divider/>
                 <div style={{paddingBottom:15}}>
 
                 <RangePicker
-                    showTime={{ format: 'HH:mm' }}
-                    format="YYYY-MM-DD HH:mm"
-                    placeholder={['Start Time', 'End Time']}
-                    onChange={onChange}
-                    onOk={onOk}/>
+                  onChange={this.onChange}
+                />
 
-                <div style={{float:"right"}}>
+                  <div style={{float:"right"}}>
 
-                    <Input style={{width:200}}
-                        prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                        placeholder="search text value"
-                        onChange={(e) => this.getSearchValue(e)}/>
-                
-                    <Divider type="vertical"/>
-                    
-                    <Button
-                    type="primary"
-                    shape="circle"
-                    icon="search"
-                    onClick={() => this.onClicked()}
-                    loading={this.state.loading}/>
-                </div>
+                      <Input style={{width:200}}
+                          prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                          placeholder="search text value"
+                          onChange={(e) => this.getSearchValue(e)}/>
+                      <Divider type="vertical"/>
+                      
+                      <Button
+                      type="primary"
+                      shape="circle"
+                      icon="search"
+                      onClick={() => this.onClicked()}
+                      loading={this.state.loading}/>
+                  </div>
                 </div>
 
                 <Table 

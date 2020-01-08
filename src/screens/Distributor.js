@@ -29,7 +29,7 @@ export default class Distributor extends Component {
 
       fetch = () =>{
       this.setState({ loading: true });
-      axios.get(URL + "/api/v1/marketing/distributors?search=" + this.state.searchValue +"&sort=-balance",
+      axios.get(URL + "api/v1/marketing/distributors?search=" + this.state.searchValue +"&sort=-balance",
       {
         headers : {
           Authorization : 'Bearer ' + localStorage.getItem("token")

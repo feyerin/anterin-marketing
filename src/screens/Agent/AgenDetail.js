@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Table,Layout,Breadcrumb,Icon,Descriptions } from 'antd';
 import axios from 'axios';
+import { URL } from "../../components/BaseUrl";
 
 const { Column } = Table;
 const { Content } = Layout;
@@ -20,7 +21,7 @@ export default class AgenDetail extends Component {
     }
 
     componentDidMount(){
-        axios.get("https://oapi.anterin.id/api/v1/marketing/agents/" + this.props.location.state.id + '/drivers',
+        axios.get(URL + "api/v1/marketing/agents/" + this.props.location.state.id + '/drivers',
             {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem("token")

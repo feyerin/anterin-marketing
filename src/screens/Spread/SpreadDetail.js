@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Table,Layout,Tabs,Descriptions,Breadcrumb,Icon } from 'antd';
 import axios from 'axios';
-
+import { URL } from "../../components/BaseUrl";
 
 const { Column } = Table;
 const { Content } = Layout;
@@ -26,7 +26,7 @@ export default class SpreadDetail extends Component {
           ...this.state,
           loading: true });
         axios.get(
-          "https://oapi.anterin.id/api/v1/marketing/spread/" + this.props.location.state.province_id + '/cities',
+          URL + "api/v1/marketing/spread/" + this.props.location.state.province_id + '/cities',
           {
           headers : {
             Authorization: "Bearer "+ localStorage.getItem("token")

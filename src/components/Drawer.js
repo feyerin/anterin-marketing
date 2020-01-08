@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Layout, Icon, Menu, Modal } from "antd";
 import { Link } from "react-router-dom";
-import logo from "../assets/Logo Anterin.png"
 
 const { Sider } = Layout;
 const { confirm } = Modal;
@@ -42,7 +41,7 @@ export default class Drawer extends Component {
         collapsed={this.state.collapsed}
         onCollapse={this.onCollapse}>
         <div style={{ alignContent: "center" }} className="logo">
-          <img style={{ margin: 20, width: 40, height: 40 }} src={logo} />
+         
         </div>
         <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
           <Menu.Item key="1">
@@ -57,12 +56,12 @@ export default class Drawer extends Component {
               <span>Distributor</span>
             </Link>
           </Menu.Item>
-          {/* <Menu.Item key="3">
+          <Menu.Item key="3">
             <Link to="/Filter">
               <Icon type="filter" />
               <span>Filter</span>
             </Link>
-          </Menu.Item> */}
+          </Menu.Item>
           <Menu.Item key="4">
             <Link to="/Dealer">
               <Icon type="audit" />

@@ -1,1 +1,1 @@
-export const URL =  "https://oapi.anterin.id/"
+export const URL =  "https://oapi-rv.anterin.id/"

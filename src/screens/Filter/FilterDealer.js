@@ -57,7 +57,7 @@ export class FilterDealer extends Component {
       loading: true });
     console.log("current page", this.state.pagination.current)
     axios.get(
-      "https://oapi.anterin.id/api/v1/marketing/dealers?search=&page="+ this.state.pagination.current,
+      "https://oapi-rv.anterin.id/api/v1/marketing/dealers?search=&page="+ this.state.pagination.current,
       {
       headers : {
         Authorization: "Bearer "+ localStorage.getItem("token")

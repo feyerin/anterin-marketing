@@ -2,7 +2,7 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import '../App.css';
-import { URL } from '../components/BaseUrl';
+import { URL } from "../components/BaseUrl";
 import axios from 'axios';
 import { Form, Icon, Input, Button, Checkbox, message,Layout } from 'antd';
 import Particles from 'react-particles-js';

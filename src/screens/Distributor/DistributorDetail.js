@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { Table,Layout,Tabs,Breadcrumb,Icon,Descriptions,Button, Divider,notification } from 'antd';
+import { Table, Layout, Tabs, Breadcrumb, Icon, Descriptions, Button, Divider, notification, DatePicker } from 'antd';
 import axios from 'axios';
 import ReactExport from "react-data-export";
+import { URL } from "../../components/BaseUrl";
+
 
 const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
@@ -9,6 +11,7 @@ const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 const { Column } = Table;
 const { Content } = Layout;
 const { TabPane } = Tabs;
+const { RangePicker } = DatePicker;
 const openNotificationWithIcon = type => {
   notification[type]({
     message: 'attention',
@@ -28,8 +31,9 @@ export default class DistributorDetail extends Component {
        }
         this.state = {
           data : [],
-          dataFromOtherComponent : modifiedData,
+          agents :[],
           drivers:[],
+          dataFromOtherComponent : modifiedData,
           pagination : {
               current : 1
             },
@@ -68,7 +72,7 @@ export default class DistributorDetail extends Component {
           ...this.state,
           loading: true });
         axios.get(
-          "https://oapi.anterin.id/api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers?page='
+          URL + "api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers?page='
           + this.state.pagination.current,
           {
           headers : {
@@ -100,13 +104,51 @@ export default class DistributorDetail extends Component {
         })
       }
 
+      onSwichAgents = () => {
+        this.setState({ 
+            ...this.state,
+            loading: true });
+        const axios = require('axios');
+        axios.get(
+            URL + "api/v1/marketing/distributors/" + this.props.location.state.id + "/Agents?page=&"
+            + this.state.pagination.current,
+            {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem("token")
+                }
+            }).then(response => {
+                const pagination = { ...this.state.pagination };
+                pagination.total = response.data.pagination.total;
+                var newArray = [];
+                response.data.data.forEach(item => {
+                    item.key = item.id;
+                    if (item.balance.code === 401){
+                      item.token = "user not registered"
+                    }else{
+                      item.token = item.balance.data.token
+                    }
+                    newArray.push(item);
+                })
+                this.setState({
+                    ...this.state,
+                    agents: newArray,
+                    loading: false,
+                    showMe:false,
+                    pagination
+                  });
+            }).catch(function (error) {
+                console.log(error);
+            });
+    }
+
+
     onSwichDrivers = () => {
         this.setState({ 
             ...this.state,
             loading: true });
         const axios = require('axios');
         axios.get(
-            "https://oapi.anterin.id/api/v1/marketing/distributors/" + this.props.location.state.id + '/drivers?page='
+            URL + "api/v1/marketing/distributors/" + this.props.location.state.id + '/drivers?page='
             + this.state.pagination.current,
             {
                 headers: {
@@ -142,7 +184,7 @@ export default class DistributorDetail extends Component {
       var self = this
       var newArray = [];
       axios.get(
-        "https://oapi.anterin.id/api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers?limit=50'
+         URL + "api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers?limit=50'
         + this.state.pagination.current,
         {
         headers : {
@@ -183,6 +225,15 @@ export default class DistributorDetail extends Component {
       })
     }
 
+    onChange=(dates, dateStrings) => {
+      console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
+      this.setState({
+        ...this.state,
+        startValue : dateStrings[0],
+        endValue : dateStrings[1]
+      }, () =>  this.fetch())
+    }
+
     render() {
         return (
             <div>
@@ -211,16 +262,17 @@ export default class DistributorDetail extends Component {
                   <Descriptions.Item label="drivers total">{this.state.dataFromOtherComponent.drivers_total}  </Descriptions.Item>
                   <Descriptions.Item label="address">{this.state.dataFromOtherComponent.address}              </Descriptions.Item>
                   <Descriptions.Item label="Export Dealer">  
-                    <Button type="primary" size="small" 
-                      onClick={this.ExportDealer}
-                      loading={this.state.loading}> 
-                      generate data
-                    </Button>
-                    <Divider type="vertical"/>
-                    {
-                     this.state.showMe? 
+                    
+                  <Button type="primary" size="small" 
+                    onClick={this.ExportDealer}
+                    loading={this.state.loading}> 
+                    generate data
+                  </Button>
+
+                  <Divider type="vertical"/>
+                  {
+                    this.state.showMe? 
                     <ExcelFile
-                      
                       filename="distributors" 
                       element={<Button size="small" onClick={() => openNotificationWithIcon('warning')}>export to Excel</Button>}>
                     <ExcelSheet data={this.state.dataToExport} name="distributors" >
@@ -241,12 +293,15 @@ export default class DistributorDetail extends Component {
                     </ExcelSheet>
                     </ExcelFile>
                     :null
-                    } 
+                  } 
                   </Descriptions.Item>
                 </Descriptions>
         
                 <Tabs defaultActiveKey="1" onChange={this.onSwichDrivers}>
                     <TabPane tab="Dealer" key="1">
+                      <RangePicker
+                        onChange={this.onChange}
+                      />
                         <Table 
                             dataSource={this.state.data}
                             pagination={this.state.pagination} 
@@ -260,8 +315,28 @@ export default class DistributorDetail extends Component {
                             <Column title="token" dataIndex="token"  />
                         </Table>
                     </TabPane>
-                    <TabPane tab="Drivers" key="2" >
-                    <Table 
+                    <TabPane tab="Dealer" key="2">
+                      <RangePicker
+                        onChange={this.onChange}
+                      />
+                        <Table 
+                            dataSource={this.state.data}
+                            pagination={this.state.pagination} 
+                            loading={this.state.loading}
+                            onChange={this.handleTableChange}>
+                            <Column title="name" dataIndex="name"  />
+                            <Column title="phone" dataIndex="phone"  />
+                            <Column title="address" dataIndex="address"  />
+                            <Column title="drivers total" dataIndex="drivers_total"  />
+                            <Column title="created at" dataIndex="created_at"/>
+                            <Column title="token" dataIndex="token"  />
+                        </Table>
+                    </TabPane>
+                    <TabPane tab="Drivers" key="3" >
+                        <RangePicker
+                          onChange={this.onChange}
+                        />
+                        <Table 
                             dataSource={this.state.drivers}
                             pagination={this.state.pagination} 
                             loading={this.state.loading}

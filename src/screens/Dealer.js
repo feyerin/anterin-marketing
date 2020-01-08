@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Layout,Table,Breadcrumb,Icon,Input,Divider,Button } from "antd";
 import axios from 'axios';
 import DetailColumn from "../screens/Dealer/DetailColumn";
+import { URL } from "../components/BaseUrl";
 
 const { Column } = Table;
 const { Content } = Layout;
@@ -57,7 +58,7 @@ export class Dealer extends Component {
       loading: true });
     console.log("current page", this.state.pagination.current)
     axios.get(
-      "https://oapi.anterin.id/api/v1/marketing/dealers?search=&page="+ this.state.pagination.current,
+      URL + "api/v1/marketing/dealers?search=&page="+ this.state.pagination.current,
       {
       headers : {
         Authorization: "Bearer "+ localStorage.getItem("token")

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Table,Layout,Tabs,Breadcrumb,Icon,Descriptions,notification,Button,Divider } from 'antd';
 import axios from 'axios';
 import ReactExport from "react-data-export";
+import { URL } from "../../components/BaseUrl";
+
 
 const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
@@ -66,7 +68,7 @@ export default class AgenDetail extends Component {
           ...this.state,
           loading: true });
         axios.get(
-          "https://oapi.anterin.id/api/v1/marketing/dealers/" + this.props.location.state.id + '/agents?page='
+          URL + "api/v1/marketing/dealers/" + this.props.location.state.id + '/agents?page='
           + this.state.pagination.current,
           {
           headers : {
@@ -103,7 +105,7 @@ export default class AgenDetail extends Component {
         ...this.state,
         loading: true });
         const axios = require('axios');
-        axios.get("https://oapi.anterin.id/api/v1/marketing/dealers/" + this.props.location.state.id + '/drivers?page='
+        axios.get(URL + "api/v1/marketing/dealers/" + this.props.location.state.id + '/drivers?page='
         + this.state.pagination.current,
             {
                 headers: {
@@ -138,7 +140,7 @@ export default class AgenDetail extends Component {
       var self = this
       var newArray = [];
       axios.get(
-        "https://oapi.anterin.id/api/v1/marketing/dealers/" + this.props.location.state.id + '/agents?limit=100'
+        URL + "api/v1/marketing/dealers/" + this.props.location.state.id + '/agents?limit=100'
         + this.state.pagination.current,
         {
         headers : {
