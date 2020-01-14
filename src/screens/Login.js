@@ -44,10 +44,11 @@ export default class Login extends React.Component {
         message.info("login berhasil")
         this.props.history.push('/Home')
       }
-      )
-      .catch(function (error) {
+      ).catch ((error) => {
         console.log(error);
-        message.error("login gagal!!!")
+        message.error(error.response.message)
+        this.setState({ 
+          ...this.state, loading:false });
       });
     }
 

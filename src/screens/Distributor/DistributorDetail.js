@@ -24,10 +24,11 @@ export default class DistributorDetail extends Component {
     constructor(props) {
         super(props)
         let modifiedData = props.location.state
+        console.log("data from other component", props.location.state.balance.data[1].amount)
         if (props.location.state.balance.code === 401){
          modifiedData.token = "user not registered"
        }else{
-           modifiedData.token = props.location.state.balance.data.token
+           modifiedData.token = props.location.state.balance.data[1].amount
        }
         this.state = {
           data : [],
@@ -39,18 +40,30 @@ export default class DistributorDetail extends Component {
             },
           loading: false,
           showMe: false,
+          dateFrom: "",
+          dateTo: "",
           dataToExport:[],
         };
     }
 
-      handleTableChange = (pagination) => {
+      handleTableDealerChange = (pagination) => {
         const pager = { ...this.state.pagination };
         console.log("PAGER", pager);
         pager.current = pagination.current;
         this.setState({
           ...this.state,
           pagination: pager
-        },() => this.fetch());    
+        },() => this.onSwitchDelaer());    
+      }
+
+      handleTableAgentsChange = (pagination) => {
+        const pager = { ...this.state.pagination };
+        console.log("PAGER", pager);
+        pager.current = pagination.current;
+        this.setState({
+          ...this.state,
+          pagination: pager
+        },() => this.onSwitchAgents());    
       }
 
       handleTableDriversChange = (pagination) => {
@@ -60,36 +73,33 @@ export default class DistributorDetail extends Component {
         this.setState({
           ...this.state,
           pagination: pager
-        },() => this.onSwichDrivers());    
+        },() => this.onSwitchDrivers());    
       }
 
       componentDidMount(){
-        this.fetch();
+        this.onSwitchDelaer();
+        this.onSwitchAgents();
+        this.onSwitchDrivers();
       }
 
-      fetch = () => {
+      onSwitchDelaer = () => {
         this.setState({ 
           ...this.state,
           loading: true });
         axios.get(
-          URL + "api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers?page='
-          + this.state.pagination.current,
+          URL + "api/v1/marketing/distributors/" + this.props.location.state.id + "/dealers?from=" + this.state.dateFrom + "&to=" + this.state.dateTo + "&page=" + this.state.pagination.current,
           {
           headers : {
             Authorization: "Bearer "+ localStorage.getItem("token")
           }
         }).then(response => {
-          console.log(response);
+          console.log("dealer",response);
           const pagination = { ...this.state.pagination };
           pagination.total = response.data.pagination.total;
           var newArray = [];
           response.data.data.forEach(item => {
             item.key = item.id;
-            if (item.balance.code === 401){
-              item.token = "user not registered"
-            }else{
-              item.token = item.balance.data.token
-            }
+            item.token = item.balance.data[1].amount;
             newArray.push(item);
           });
           this.setState({
@@ -104,14 +114,12 @@ export default class DistributorDetail extends Component {
         })
       }
 
-      onSwichAgents = () => {
+      onSwitchAgents = () => {
         this.setState({ 
             ...this.state,
             loading: true });
-        const axios = require('axios');
         axios.get(
-            URL + "api/v1/marketing/distributors/" + this.props.location.state.id + "/Agents?page=&"
-            + this.state.pagination.current,
+            URL + "api/v1/marketing/distributors/" + this.props.location.state.id + "/agents?from=" + this.state.dateFrom + "&to=" + this.state.dateTo + "&page=" + this.state.pagination.current,
             {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem("token")
@@ -120,14 +128,10 @@ export default class DistributorDetail extends Component {
                 const pagination = { ...this.state.pagination };
                 pagination.total = response.data.pagination.total;
                 var newArray = [];
-                response.data.data.forEach(item => {
-                    item.key = item.id;
-                    if (item.balance.code === 401){
-                      item.token = "user not registered"
-                    }else{
-                      item.token = item.balance.data.token
-                    }
-                    newArray.push(item);
+                response.data.data.forEach(item => {    
+                  item.token = item.balance.data[1].amount;
+                  item.created_at = item.created_at;
+                  newArray.push(item);
                 })
                 this.setState({
                     ...this.state,
@@ -142,14 +146,13 @@ export default class DistributorDetail extends Component {
     }
 
 
-    onSwichDrivers = () => {
+    onSwitchDrivers = () => {
         this.setState({ 
             ...this.state,
             loading: true });
         const axios = require('axios');
         axios.get(
-            URL + "api/v1/marketing/distributors/" + this.props.location.state.id + '/drivers?page='
-            + this.state.pagination.current,
+            URL + "api/v1/marketing/distributors/" + this.props.location.state.id + "/drivers?from=" + this.state.dateFrom + "&to=" + this.state.dateTo + "&page=" + this.state.pagination.current,
             {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem("token")
@@ -159,12 +162,8 @@ export default class DistributorDetail extends Component {
                 pagination.total = response.data.pagination.total;
                 var newArray = [];
                 response.data.data.forEach(item => {
-                    item.key = item.id;
-                    if (item.balance.code === 401){
-                      item.token = "user not registered"
-                    }else{
-                      item.token = item.balance.data.token
-                    }
+                    item.key = item.id; 
+                    item.created_at = item.created_at.date;                   
                     newArray.push(item);
                 })
                 this.setState({
@@ -184,8 +183,7 @@ export default class DistributorDetail extends Component {
       var self = this
       var newArray = [];
       axios.get(
-         URL + "api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers?limit=50'
-        + this.state.pagination.current,
+         URL + "api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers?limit=50' + this.state.pagination.current,
         {
         headers : {
           Authorization: "Bearer "+ localStorage.getItem("token")
@@ -205,11 +203,7 @@ export default class DistributorDetail extends Component {
         ]
         response.data.data.forEach(item => {
           item.key = item.id;
-          if (item.balance.code === 401){
-            item.token = "user not registered"
-          }else{
-            item.token = item.balance.data.token
-          }
+          item.token = item.balance.data[1].amount
           newArray.push(item);
         },()=> console.log("dataset1:", this.dataSet1));
         self.setState({
@@ -229,9 +223,9 @@ export default class DistributorDetail extends Component {
       console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
       this.setState({
         ...this.state,
-        startValue : dateStrings[0],
-        endValue : dateStrings[1]
-      }, () =>  this.fetch())
+        dateFrom : dateStrings[0],
+        dateTo : dateStrings[1]
+      }, () =>  this.componentDidMount())
     }
 
     render() {
@@ -251,7 +245,7 @@ export default class DistributorDetail extends Component {
                     background: '#fff',
                     padding: 24,
                     margin: 0,
-                    minHeight: 280,
+                    minHeight: 230,
                 }}>
                 <Descriptions title="Distributor Info" size="small" column={2}>
                   <Descriptions.Item label="name">{this.state.dataFromOtherComponent.name}                    </Descriptions.Item>
@@ -261,20 +255,31 @@ export default class DistributorDetail extends Component {
                   <Descriptions.Item label="phone">{this.state.dataFromOtherComponent.phone}                  </Descriptions.Item>
                   <Descriptions.Item label="drivers total">{this.state.dataFromOtherComponent.drivers_total}  </Descriptions.Item>
                   <Descriptions.Item label="address">{this.state.dataFromOtherComponent.address}              </Descriptions.Item>
-                  <Descriptions.Item label="Export Dealer">  
-                    
-                  <Button type="primary" size="small" 
+                </Descriptions>
+                </Content>
+
+                <Content
+                  style={{
+                      background: '#fff',
+                      padding: 24,
+                      marginTop: 50,
+                      minHeight: 280,
+                  }}>                
+                  <RangePicker style={{paddingTop:10, paddingBottom:10}} onChange={this.onChange} />
+                  
+                  <div style={{float:"right",marginTop:10, marginBottom:10}}>
+                  <Button type="primary" 
                     onClick={this.ExportDealer}
                     loading={this.state.loading}> 
                     generate data
                   </Button>
-
                   <Divider type="vertical"/>
+                  
                   {
                     this.state.showMe? 
                     <ExcelFile
-                      filename="distributors" 
-                      element={<Button size="small" onClick={() => openNotificationWithIcon('warning')}>export to Excel</Button>}>
+                    filename="distributors" 
+                    element={<Button onClick={() => openNotificationWithIcon('warning')}>export to Excel</Button>}>
                     <ExcelSheet data={this.state.dataToExport} name="distributors" >
                         <ExcelColumn label="Name" value="name"/>
                         <ExcelColumn label="phone" value="phone"/>
@@ -293,20 +298,16 @@ export default class DistributorDetail extends Component {
                     </ExcelSheet>
                     </ExcelFile>
                     :null
-                  } 
-                  </Descriptions.Item>
-                </Descriptions>
+                  }
+                  </div>
         
-                <Tabs defaultActiveKey="1" onChange={this.onSwichDrivers}>
-                    <TabPane tab="Dealer" key="1">
-                      <RangePicker
-                        onChange={this.onChange}
-                      />
+                <Tabs defaultActiveKey="1" onChange={this.onSwitchDrivers}>
+                    <TabPane tab="Dealer" key="1" onChange={this.onSwitchDelaer}>
                         <Table 
                             dataSource={this.state.data}
                             pagination={this.state.pagination} 
                             loading={this.state.loading}
-                            onChange={this.handleTableChange}>
+                            onChange={this.handleTableDealerChange}>
                             <Column title="name" dataIndex="name"  />
                             <Column title="phone" dataIndex="phone"  />
                             <Column title="address" dataIndex="address"  />
@@ -315,15 +316,12 @@ export default class DistributorDetail extends Component {
                             <Column title="token" dataIndex="token"  />
                         </Table>
                     </TabPane>
-                    <TabPane tab="Dealer" key="2">
-                      <RangePicker
-                        onChange={this.onChange}
-                      />
+                    <TabPane tab="Agents" key="2" onClick={this.onSwitchAgents}>
                         <Table 
-                            dataSource={this.state.data}
+                            dataSource={this.state.agents}
                             pagination={this.state.pagination} 
                             loading={this.state.loading}
-                            onChange={this.handleTableChange}>
+                            onChange={this.handleTableAgentsChange}>
                             <Column title="name" dataIndex="name"  />
                             <Column title="phone" dataIndex="phone"  />
                             <Column title="address" dataIndex="address"  />
@@ -332,10 +330,7 @@ export default class DistributorDetail extends Component {
                             <Column title="token" dataIndex="token"  />
                         </Table>
                     </TabPane>
-                    <TabPane tab="Drivers" key="3" >
-                        <RangePicker
-                          onChange={this.onChange}
-                        />
+                    <TabPane tab="Drivers" key="3" onChange={this.onSwitchDrivers}>
                         <Table 
                             dataSource={this.state.drivers}
                             pagination={this.state.pagination} 
@@ -347,7 +342,6 @@ export default class DistributorDetail extends Component {
                             <Column title="gender" dataIndex="gender"  />
                             <Column title="address" dataIndex="address"  />
                             <Column title="created at" dataIndex="created_at"/>
-                            <Column title="token" dataIndex="token"  />
                         </Table>
                     </TabPane>
                 </Tabs>

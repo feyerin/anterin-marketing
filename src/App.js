@@ -27,11 +27,10 @@ class App extends Component {
   return (
     <BrowserRouter>
     <Switch>
-        <Route exact path="/" component={Login}/>
-       <Layout style={{ minHeight: "100vh" }}>
+      <Route exact path="/" component={Login}/>
+      <Layout style={{ minHeight: "100vh" }}>
       <Drawer customProps={this.props.history}/>
-      <Layout>
-      
+      <Layout>      
       <Navbar/>
           <Content style={{ margin: '0 16px' }}>
             <Route path="/Home" component={Home}/>

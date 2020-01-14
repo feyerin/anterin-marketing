@@ -66,9 +66,10 @@ export class Home extends Component {
         loading: false,
         pagination,
       });
-    })
-    .catch(function(error) {
+    }).catch((error) => {
       console.log(error);
+      this.setState({ 
+        ...this.state, loading:false });
     })
   }
 

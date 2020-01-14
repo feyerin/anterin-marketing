@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Button } from "antd";
+import { URL } from "../../components/BaseUrl";
 
 export default class DetailColumn extends Component {
     state = {

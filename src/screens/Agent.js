@@ -65,14 +65,14 @@ export class Agent extends Component {
     }).then(response => {
       console.log(response);
       const pagination = { ...this.state.pagination };
-      pagination.total = 451;
+      pagination.total = response.data.pagination.total;
       var newArray = [];
       response.data.data.forEach(item => {
         item.key = item.id;
-        if (item.balance.code === 401){
+        if (item.balance.data[1].amount === 401){
           item.token = "user not registered"
         }else{
-          item.token = item.balance.data.token
+          item.token = item.balance.data[1].amount
         }
         newArray.push(item);
       });
@@ -82,9 +82,10 @@ export class Agent extends Component {
         loading: false,
         pagination,
       });
-    })
-    .catch(function(error) {
+    }).catch((error) => {
       console.log(error);
+      this.setState({ 
+        ...this.state, loading:false });
     })
   }
 

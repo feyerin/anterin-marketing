@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Table,Layout,Breadcrumb,Icon,Divider,Tooltip,Input,Button} from "antd";
+import {Table,Layout,Breadcrumb,Icon,Divider,Tooltip,Input,Button, DatePicker} from "antd";
 import axios from "axios";
 import {URL} from "../components/BaseUrl";
 import DetailColumn from "../screens/Distributor/DetailColumn";
@@ -7,6 +7,8 @@ import { CSVLink } from "react-csv";
 
 const { Content } = Layout;
 const{Column} = Table;
+const { RangePicker } = DatePicker;
+
 
 export default class Distributor extends Component {
   //Login verivikator
@@ -21,15 +23,31 @@ export default class Distributor extends Component {
         data : [],
         loading : false,
         searchValue: "",
+        pagination : {
+          current : 1
+        },
+        dateFrom : "",
+        dateTo : "",
       };
 
       componentDidMount(){
         this.fetch();
       }
 
+      handleTableChange = (pagination) => {
+        const pager = { ...this.state.pagination };
+        console.log("PAGER", pager);
+        pager.current = pagination.current;
+        this.setState({
+          ...this.state,
+          pagination: pager,
+        },() => this.fetch());    
+      }
+
       fetch = () =>{
       this.setState({ loading: true });
-      axios.get(URL + "api/v1/marketing/distributors?search=" + this.state.searchValue +"&sort=-balance",
+      console.log("current page", this.state.pagination.current)
+      axios.get(URL + "api/v1/marketing/distributors?search=" + this.state.searchValue +"&sort=name&from="+ this.state.dateFrom + "&to=" +this.state.dateTo + "&page=" + this.state.pagination.current,
       {
         headers : {
           Authorization : 'Bearer ' + localStorage.getItem("token")
@@ -37,14 +55,15 @@ export default class Distributor extends Component {
       })
       .then(response => {
         console.log(response);
-        console.log("seach value :", this.state.searchValue)
+        const pagination = { ...this.state.pagination };
+        pagination.total = response.data.pagination.total;
         var newArray = [];
         response.data.data.forEach(item => {
           item.key = item.id;
-          if (item.balance.code === 401){
+          if (item.balance.data[1].amount === 401){
             item.token = "user not registered"
           }else{
-            item.token = item.balance.data.token
+            item.token = item.balance.data[1].amount
           }
           newArray.push(item);
         });
@@ -52,10 +71,13 @@ export default class Distributor extends Component {
           ...this.state,
           data: newArray,
           loading: false,
+          pagination,
         });
       })
-      .catch(function(error) {
+      .catch((error) => {
         console.log(error);
+        this.setState({ 
+          ...this.state, loading:false });
       })
     }
 
@@ -70,6 +92,16 @@ export default class Distributor extends Component {
     onClicked = () => {
       console.log(this)
       this.fetch(this.state.searchValue)
+    }
+
+    onChange=(dates, dateStrings) => {
+      console.log('From: ', dateStrings[0] );
+      console.log(' to: ', dateStrings[1] );
+      this.setState({
+        ...this.state,
+        dateFrom : dateStrings[0],
+        dateTo : dateStrings[1]
+      }, () =>  this.componentDidMount())
     }
 
     render(){
@@ -108,26 +140,28 @@ export default class Distributor extends Component {
               shape="circle"
               icon="search"
               onClick={() => this.onClicked()}
-              loading={this.state.loading}
-            ></Button>
-            <Divider/>
-            <Table 
-              dataSource={this.state.data} 
-              pagination={{defaultPageSize: 20}} 
               loading={this.state.loading}>
-              <Column title="name" dataIndex="name"  />
-              <Column title="phone" dataIndex="phone"  />
-              <Column title="email" dataIndex="email"  />
-              <Column title="address" dataIndex="address"  />
-              <Column title="token" dataIndex="token"  />
-              <Column title="created at" dataIndex="created_at"/>
-              <Column title="detail" dataIndex="detail" 
-                render={
-                  (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>
-                }
-            > 
-            </Column>
-            </Table>
+            </Button>
+            <Divider/>
+            <RangePicker style={{paddingBottom:20}} onChange={this.onChange} />
+            
+              <Table 
+                dataSource={this.state.data} 
+                pagination={this.state.pagination} 
+                loading={this.state.loading}
+                onChange={this.handleTableChange}>
+                <Column title="name" dataIndex="name"  />
+                <Column title="phone" dataIndex="phone"  />
+                <Column title="email" dataIndex="email"  />
+                <Column title="address" dataIndex="address"  />
+                <Column title="token" dataIndex="token"  />
+                <Column title="created at" dataIndex="created_at"/>
+                <Column title="detail" dataIndex="detail" 
+                  render={
+                    (unused1,obj,unused2) => <DetailColumn history={this.props.history} data={obj}/>
+                  }> 
+                </Column>
+              </Table>
             </Content>
           </div>
       );

@@ -35,6 +35,7 @@ export default class Drawer extends Component {
   };
 
   render() {
+    console.log("props", this.props)
     return (
       <Sider
         collapsible
@@ -56,12 +57,12 @@ export default class Drawer extends Component {
               <span>Distributor</span>
             </Link>
           </Menu.Item>
-          <Menu.Item key="3">
+          {/* <Menu.Item key="3">
             <Link to="/Filter">
               <Icon type="filter" />
               <span>Filter</span>
             </Link>
-          </Menu.Item>
+          </Menu.Item> */}
           <Menu.Item key="4">
             <Link to="/Dealer">
               <Icon type="audit" />

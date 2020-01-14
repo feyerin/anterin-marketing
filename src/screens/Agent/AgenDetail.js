@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Table,Layout,Breadcrumb,Icon,Descriptions } from 'antd';
+import { Table,Layout,Breadcrumb,Icon,Descriptions, DatePicker } from 'antd';
 import axios from 'axios';
 import { URL } from "../../components/BaseUrl";
 
 const { Column } = Table;
 const { Content } = Layout;
+const { RangePicker } = DatePicker;
 
 export default class AgenDetail extends Component {
     constructor(props) {
@@ -12,16 +13,37 @@ export default class AgenDetail extends Component {
         if (props.location.state.balance.code === 401){
            this.container = "user not registered"
         }else{
-            this.container = props.location.state.balance.data.token
+            this.container = props.location.state.balance.data[1].amount
         }
         this.state = {
           data : [],
-          drivers:[],
+          drivers : [],
+          pagination :
+            {
+              current : 1
+            },
+          loading :false,
+          dateFrom : "",
+          dateTo : "",
         };
     }
 
+    handleTableChange = (pagination) => {
+      const pager = { ...this.state.pagination };
+      pager.current = pagination.current;
+      this.setState({
+        ...this.state,
+        pagination: pager
+      },() => this.componentDidMount());    
+    }
+
     componentDidMount(){
-        axios.get(URL + "api/v1/marketing/agents/" + this.props.location.state.id + '/drivers',
+      this.setState({ 
+        ...this.state,
+        loading: true,
+      });
+        const pagination = { ...this.state.pagination };
+        axios.get(URL + "api/v1/marketing/agents/" + this.props.location.state.id + "/drivers?from=" + this.state.dateFrom + "&to=" + this.state.dateTo + "&page=" + this.state.pagination.current,
             {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem("token")
@@ -29,23 +51,30 @@ export default class AgenDetail extends Component {
             }).then(response => {
                 console.log('NESTEDCALLAPI ', response.data.data);
                 var newArray = [];
+                pagination.total = response.data.pagination.total;
                 response.data.data.forEach(item => {
                   item.key = item.id;
-                  if (item.balance.code === 401){
-                      item.token = "user not registered"
-                    }else{
-                      item.token = item.balance.data.token
-                    }
+                  item.created_at = item.created_at.date;
                   newArray.push(item);
-                  console.log ("get token :", item.balance.data.token)
                 });
                 this.setState({
                   ...this.state,
-                  data: newArray
+                  data: newArray,
+                  loading: false,
+                  pagination,
                 });
             }).catch(function (error) {
                 console.log(error);
             });
+        }
+
+        onChange=(dates, dateStrings) => {
+          console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
+          this.setState({
+            ...this.state,
+            dateFrom : dateStrings[0],
+            dateTo : dateStrings[1]
+          }, () =>  this.componentDidMount())
         }
     
     render() {
@@ -66,7 +95,7 @@ export default class AgenDetail extends Component {
                     background: '#fff',
                     padding: 24,
                     margin: 0,
-                    minHeight: 280,
+                    minHeight: 220,
                 }}>
 
                 <Descriptions title="Dealers Info" size="small" column={2}>
@@ -77,12 +106,27 @@ export default class AgenDetail extends Component {
                   <Descriptions.Item label="address">{this.props.location.state.address}              </Descriptions.Item>
                 </Descriptions>
 
-                <Table dataSource={this.state.data}>
+                </Content>
+
+                <Content
+                style={{
+                    background: '#fff',
+                    padding: 24,
+                    marginTop: 30,
+                    minHeight: 280,
+                }}>
+
+                <RangePicker style={{paddingTop:10, paddingBottom:20}} onChange={this.onChange} />
+
+                <Table 
+                  dataSource={this.state.data}
+                  pagination={this.state.pagination} 
+                  loading={this.state.loading}
+                  onChange={this.handleTableChange}>
                   <Column title="name" dataIndex="name"  />
                   <Column title="phone" dataIndex="phone"  />
                   <Column title="address" dataIndex="address"  /> 
                   <Column title="created at" dataIndex="created_at"/>
-                  <Column title="token" dataIndex="token"/>
                 </Table>
             </Content>
           </div>

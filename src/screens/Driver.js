@@ -71,11 +71,11 @@ export default class Driver extends Component {
         item.key = item.id;
         item.created_at = item.created_at.date;
         console.log('created_at :', item.created_at.date)
-        if (item.balance.code === 401){
-          item.token = "user not registered"
-        }else{
-          item.token = item.balance.data.token
-        }
+        // if (item.balance.code === 401){
+        //   item.token = "user not registered"
+        // }else{
+        //   item.token = item.balance.data.token
+        // }
         newArray.push(item);
       });
       this.setState({
@@ -84,10 +84,11 @@ export default class Driver extends Component {
         loading: false,
         pagination,
       });
-    })
-    .catch(function(error) {
+    }).catch((error) => {
       console.log(error);
-    })
+      this.setState({ 
+        ...this.state, loading:false });
+    })  
   }
 
   search = () => {
@@ -103,17 +104,18 @@ export default class Driver extends Component {
       }
       
     }).then(response => {
-      
       console.log(response);
       var newArray = [];
       response.data.data.forEach(item => {
+        console.log("token", item.balance.data[1].amount)
         item.key = item.id;
         item.created_at = item.created_at.date;
-        if (item.balance.code === 401){
-          item.token = "user not registered"
-        }else{
-          item.token = item.balance.data.token
-        }
+        // if (item.balance.code === 401){
+        //   item.token = "user not registered"
+        // }else{
+        //   item.token = item.balance.data.token
+        // }
+        item.token = item.balance.data[1].amount
         newArray.push(item);
       });
       this.setState({
@@ -168,7 +170,6 @@ export default class Driver extends Component {
             <Column title="gender" dataIndex="gender"  />
             <Column title="address" dataIndex="address"  />   
             <Column title="created at" dataIndex="created_at"/>       
-            <Column title="token" dataIndex="token"  />
             </Table>
           </Content>
         </div>
