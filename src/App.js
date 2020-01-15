@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Layout } from "antd";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch, HashRouter } from "react-router-dom";
 import "./App.css";
 import Home from "./screens/Home";
 import Drawer from "./components/Drawer";
@@ -25,7 +25,7 @@ const { Content } = Layout;
 class App extends Component {
   render() {
   return (
-    <BrowserRouter>
+    <HashRouter>
     <Switch>
       <Route exact path="/" component={Login}/>
       <Layout style={{ minHeight: "100vh" }}>
@@ -54,7 +54,7 @@ class App extends Component {
       <Navbar/>
           
       </Switch> 
-      </BrowserRouter>
+      </HashRouter>
   );
 }
 }

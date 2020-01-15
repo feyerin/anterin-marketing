@@ -142,9 +142,7 @@ export default class Distributor extends Component {
               onClick={() => this.onClicked()}
               loading={this.state.loading}>
             </Button>
-            <Divider/>
-            <RangePicker style={{paddingBottom:20}} onChange={this.onChange} />
-            
+            <Divider/>            
               <Table 
                 dataSource={this.state.data} 
                 pagination={this.state.pagination} 
