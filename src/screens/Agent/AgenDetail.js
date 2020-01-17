@@ -43,7 +43,7 @@ export default class AgenDetail extends Component {
         loading: true,
       });
         const pagination = { ...this.state.pagination };
-        axios.get(URL + "api/v1/marketing/agents/" + this.props.location.state.id + "/drivers?from=" + this.state.dateFrom + "&to=" + this.state.dateTo + "&page=" + this.state.pagination.current,
+        axios.get(URL + "api/v1/marketing/agents/" + this.props.location.state.id + "/drivers?from=" + this.state.dateFrom + "&to=" + this.state.dateTo + "&page=" + this.state.pagination.current + "&sort=name",
             {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem("token")

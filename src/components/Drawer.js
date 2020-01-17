@@ -1,18 +1,18 @@
 import React, { Component } from "react";
 import { Layout, Icon, Menu, Modal } from "antd";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 const { Sider } = Layout;
 const { confirm } = Modal;
 
-export default class Drawer extends Component {
+class Drawer extends Component {
   state = {
     collapsed: true
   };
   //clear token from localStorage
   onOkay = () => {
     localStorage.clear()
-    this.props.customProps.push('/')
+    this.props.history.push('/')
     console.log('token:', localStorage.clear() )
   }
 
@@ -35,7 +35,7 @@ export default class Drawer extends Component {
   };
 
   render() {
-    console.log("props", this.props)
+    console.log("props drawer", this.props.history)
     return (
       <Sider
         collapsible
@@ -102,3 +102,5 @@ export default class Drawer extends Component {
     );
   }
 }
+
+export default withRouter(Drawer);

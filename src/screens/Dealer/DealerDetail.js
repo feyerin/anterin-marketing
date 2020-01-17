@@ -33,9 +33,12 @@ export default class AgenDetail extends Component {
         data : [],
         dataFromOtherComponent : modifiedData,
         drivers:[],
-        pagination : {
-            current : 1
-          },
+        pagination1 : {
+          current : 1
+        },
+        pagination2 : {
+          current : 1
+        },
         loading: false,
         showMe: false,
         dataToExport:[],
@@ -44,21 +47,21 @@ export default class AgenDetail extends Component {
       };
     }
       
-      handleTableChange = (pagination) => {
-        const pager = { ...this.state.pagination };
-        pager.current = pagination.current;
+      handleTableChange = (pagination1) => {
+        const pager = { ...this.state.pagination1 };
+        pager.current = pagination1.current;
         this.setState({
           ...this.state,
-          pagination: pager
+          pagination1: pager
         },() => this.fetch());    
       }
 
-      handleTableDriversChange = (pagination) => {
-        const pager = { ...this.state.pagination };
-        pager.current = pagination.current;
+      handleTableDriversChange = (pagination2) => {
+        const pager = { ...this.state.pagination2 };
+        pager.current = pagination2.current;
         this.setState({
           ...this.state,
-          pagination: pager
+          pagination2: pager
         },() => this.onSwichDrivers());    
       }
 
@@ -71,19 +74,19 @@ export default class AgenDetail extends Component {
         this.setState({ 
           ...this.state,
           loading: true,
-          pagination : {
+          pagination1 : {
             current: 1 } 
         });
-        const pagination = { ...this.state.pagination };
+        const pagination1 = { ...this.state.pagination1 };
         axios.get(
-          URL + "api/v1/marketing/dealers/" + this.props.location.state.id + '/agents?page=' + this.state.pagination.current,
+          URL + "api/v1/marketing/dealers/" + this.props.location.state.id + '/agents?page=' + this.state.pagination1.current + "&sort=name",
           {
           headers : {
             Authorization: "Bearer "+ localStorage.getItem("token")
           }
         }).then(response => {
           console.log(response);
-          pagination.total = response.data.pagination.total;
+          pagination1.total = response.data.pagination.total;
           var newArray = [];
           response.data.data.forEach(item => {
             item.key = item.id;
@@ -94,7 +97,7 @@ export default class AgenDetail extends Component {
             ...this.state,
             data: newArray,
             loading: false,
-            pagination,
+            pagination1,
           });
         })
         .catch(function(error) {
@@ -106,18 +109,18 @@ export default class AgenDetail extends Component {
       this.setState({ 
         ...this.state,
         loading: true,
-        pagination : {
+        pagination2 : {
           current: 1 }
       });
         const axios = require('axios');
-        const pagination = { ...this.state.pagination };
-        axios.get(URL + "api/v1/marketing/dealers/" + this.props.location.state.id + "/drivers?from=" + this.state.dateFrom + "&to=" + this.state.dateTo + "&page="+ this.state.pagination.current,
+        const pagination2 = { ...this.state.pagination2 };
+        axios.get(URL + "api/v1/marketing/dealers/" + this.props.location.state.id + "/drivers?from=" + this.state.dateFrom + "&to=" + this.state.dateTo + "&page="+ this.state.pagination2.current,
         {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem("token")
           }
         }).then(response => {
-            pagination.total = response.data.pagination.total;        
+            pagination2.total = response.data.pagination.total;        
             console.log(response)
             var newArray = [];
             response.data.data.forEach(item => {
@@ -129,7 +132,7 @@ export default class AgenDetail extends Component {
                 ...this.state,
                   drivers: newArray,
                   loading: false,
-                  pagination,
+                  pagination2,
               });
             }).catch(function (error) {
                 console.log(error);
@@ -142,7 +145,7 @@ export default class AgenDetail extends Component {
       var newArray = [];
       axios.get(
         URL + "api/v1/marketing/dealers/" + this.props.location.state.id + '/agents?limit=100'
-        + this.state.pagination.current,
+        + this.state.pagination1.current,
         {
         headers : {
           Authorization: "Bearer "+ localStorage.getItem("token")
@@ -265,7 +268,7 @@ export default class AgenDetail extends Component {
                     <TabPane tab="Agents" key="1">
                         <Table 
                             dataSource={this.state.data}
-                            pagination={this.state.pagination} 
+                            pagination={this.state.pagination1} 
                             loading={this.state.loading}
                             onChange={this.handleTableChange}>
                             <Column title="name" dataIndex="name"  />
@@ -279,7 +282,7 @@ export default class AgenDetail extends Component {
                     <TabPane tab="Drivers" key="2">
                     <Table 
                             dataSource={this.state.drivers}
-                            pagination={this.state.pagination} 
+                            pagination={this.state.pagination2} 
                             loading={this.state.loading}
                             onChange={this.handleTableDriversChange}>
                             <Column title="name" dataIndex="name"  />

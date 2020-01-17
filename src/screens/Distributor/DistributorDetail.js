@@ -35,9 +35,15 @@ export default class DistributorDetail extends Component {
           agents :[],
           drivers:[],
           dataFromOtherComponent : modifiedData,
-          pagination : {
-              current : 1
-            },
+          pagination1 : {
+            current : 1
+          },
+          pagination2 : {
+            current : 1
+            },  
+          pagination3 : {
+            current : 1
+          },  
           loading: false,
           showMe: false,
           dateFrom: "",
@@ -46,33 +52,33 @@ export default class DistributorDetail extends Component {
         };
     }
 
-      handleTableDealerChange = (pagination) => {
-        const pager = { ...this.state.pagination };
+      handleTableDealerChange = (pagination1) => {
+        const pager = { ...this.state.pagination1 };
         console.log("PAGER", pager);
-        pager.current = pagination.current;
+        pager.current = pagination1.current;
         this.setState({
           ...this.state,
-          pagination: pager
+          pagination1: pager
         },() => this.onSwitchDelaer());    
       }
 
-      handleTableAgentsChange = (pagination) => {
-        const pager = { ...this.state.pagination };
+      handleTableAgentsChange = (pagination2) => {
+        const pager = { ...this.state.pagination2 };
         console.log("PAGER", pager);
-        pager.current = pagination.current;
+        pager.current = pagination2.current;
         this.setState({
           ...this.state,
-          pagination: pager
+          pagination2: pager
         },() => this.onSwitchAgents());    
       }
 
-      handleTableDriversChange = (pagination) => {
-        const pager = { ...this.state.pagination };
+      handleTableDriversChange = (pagination3) => {
+        const pager = { ...this.state.pagination3 };
         console.log("PAGER", pager);
-        pager.current = pagination.current;
+        pager.current = pagination3.current;
         this.setState({
           ...this.state,
-          pagination: pager
+          pagination3: pager
         },() => this.onSwitchDrivers());    
       }
 
@@ -87,15 +93,15 @@ export default class DistributorDetail extends Component {
           ...this.state,
           loading: true });
         axios.get(
-          URL + "api/v1/marketing/distributors/" + this.props.location.state.id + "/dealers?from=" + this.state.dateFrom + "&to=" + this.state.dateTo + "&page=" + this.state.pagination.current,
+          URL + "api/v1/marketing/distributors/" + this.props.location.state.id + "/dealers?from=" + this.state.dateFrom + "&to=" + this.state.dateTo + "&page=" + this.state.pagination1.current + "&sort=name",
           {
           headers : {
             Authorization: "Bearer "+ localStorage.getItem("token")
           }
         }).then(response => {
           console.log("dealer",response);
-          const pagination = { ...this.state.pagination };
-          pagination.total = response.data.pagination.total;
+          const pagination1 = { ...this.state.pagination1 };
+          pagination1.total = response.data.pagination.total;
           var newArray = [];
           response.data.data.forEach(item => {
             item.key = item.id;
@@ -106,7 +112,7 @@ export default class DistributorDetail extends Component {
             ...this.state,
             data: newArray,
             loading: false,
-            pagination,
+            pagination1,
           });
         })
         .catch(function(error) {
@@ -119,14 +125,14 @@ export default class DistributorDetail extends Component {
             ...this.state,
             loading: true });
         axios.get(
-            URL + "api/v1/marketing/distributors/" + this.props.location.state.id + "/agents?from=" + this.state.dateFrom + "&to=" + this.state.dateTo + "&page=" + this.state.pagination.current,
+            URL + "api/v1/marketing/distributors/" + this.props.location.state.id + "/agents?from=" + this.state.dateFrom + "&to=" + this.state.dateTo + "&page=" + this.state.pagination2.current + "&sort=name",
             {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem("token")
                 }
             }).then(response => {
-                const pagination = { ...this.state.pagination };
-                pagination.total = response.data.pagination.total;
+                const pagination2 = { ...this.state.pagination2 };
+                pagination2.total = response.data.pagination.total;
                 var newArray = [];
                 response.data.data.forEach(item => {    
                   item.token = item.balance.data[1].amount;
@@ -138,7 +144,7 @@ export default class DistributorDetail extends Component {
                     agents: newArray,
                     loading: false,
                     showMe:false,
-                    pagination
+                    pagination2
                   });
             }).catch(function (error) {
                 console.log(error);
@@ -152,14 +158,15 @@ export default class DistributorDetail extends Component {
             loading: true });
         const axios = require('axios');
         axios.get(
-            URL + "api/v1/marketing/distributors/" + this.props.location.state.id + "/drivers?from=" + this.state.dateFrom + "&to=" + this.state.dateTo + "&page=" + this.state.pagination.current,
+            URL + "api/v1/marketing/distributors/" + this.props.location.state.id + "/drivers?from=" + this.state.dateFrom + "&to=" + this.state.dateTo + "&page=" + this.state.pagination3.current + "&sort=name",
             {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem("token")
                 }
             }).then(response => {
-                const pagination = { ...this.state.pagination };
-                pagination.total = response.data.pagination.total;
+              console.log("driver", response)
+                const pagination3 = { ...this.state.pagination3 };
+                pagination3.total = response.data.pagination.total;
                 var newArray = [];
                 response.data.data.forEach(item => {
                     item.key = item.id; 
@@ -171,7 +178,7 @@ export default class DistributorDetail extends Component {
                     drivers: newArray,
                     loading: false,
                     showMe:false,
-                    pagination
+                    pagination3
                   });
             }).catch(function (error) {
                 console.log(error);
@@ -183,7 +190,7 @@ export default class DistributorDetail extends Component {
       var self = this
       var newArray = [];
       axios.get(
-         URL + "api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers?limit=50' + this.state.pagination.current,
+         URL + "api/v1/marketing/distributors/" + this.props.location.state.id + '/dealers?limit=50' + this.state.pagination1.current,
         {
         headers : {
           Authorization: "Bearer "+ localStorage.getItem("token")
@@ -211,7 +218,7 @@ export default class DistributorDetail extends Component {
           dataToExport: dataSet1,
           data: newArray,
           loading:false,
-          showMe:true
+          showMe:true,
         });
       })
       .catch(function(error) {
@@ -305,7 +312,7 @@ export default class DistributorDetail extends Component {
                     <TabPane tab="Dealer" key="1" onChange={this.onSwitchDelaer}>
                         <Table 
                             dataSource={this.state.data}
-                            pagination={this.state.pagination} 
+                            pagination={this.state.pagination1} 
                             loading={this.state.loading}
                             onChange={this.handleTableDealerChange}>
                             <Column title="name" dataIndex="name"  />
@@ -319,7 +326,7 @@ export default class DistributorDetail extends Component {
                     <TabPane tab="Agents" key="2" onClick={this.onSwitchAgents}>
                         <Table 
                             dataSource={this.state.agents}
-                            pagination={this.state.pagination} 
+                            pagination={this.state.pagination2} 
                             loading={this.state.loading}
                             onChange={this.handleTableAgentsChange}>
                             <Column title="name" dataIndex="name"  />
@@ -333,7 +340,7 @@ export default class DistributorDetail extends Component {
                     <TabPane tab="Drivers" key="3" onChange={this.onSwitchDrivers}>
                         <Table 
                             dataSource={this.state.drivers}
-                            pagination={this.state.pagination} 
+                            pagination={this.state.pagination3} 
                             loading={this.state.loading}
                             onChange={this.handleTableDriversChange}>>
                             <Column title="name" dataIndex="name"  />

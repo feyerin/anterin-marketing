@@ -5,7 +5,6 @@ import "./App.css";
 import Home from "./screens/Home";
 import Drawer from "./components/Drawer";
 import Navbar from "./components/Navbar";
-import Filter from "./screens/Filter/Filter";
 import Distributor from "./screens/Distributor";
 import Driver from "./screens/Driver";
 import Dealer from "./screens/Dealer";
@@ -16,36 +15,30 @@ import AgenDetail from "./screens/Agent/AgenDetail";
 import DealerDetail from "./screens/Dealer/DealerDetail";
 import DistributorDetail from "./screens/Distributor/DistributorDetail";
 import SpreadDetail from "./screens/Spread/SpreadDetail";
-import { FilterDealer } from "./screens/Filter/FilterDealer";
-import { FilterAgent } from "./screens/Filter/FilterAgent";
-import FilterDriver from "./screens/Filter/FilterDriver";
 
 const { Content } = Layout;
 
-class App extends Component {
+export default class App extends Component {
   render() {
+    console.log("callback cuk", this.props)
   return (
-    <HashRouter>
+    <BrowserRouter>
     <Switch>
       <Route exact path="/" component={Login}/>
       <Layout style={{ minHeight: "100vh" }}>
-      <Drawer customProps={this.props.history}/>
+      <Drawer history={this.props.history}/>
       <Layout>      
       <Navbar/>
-          <Content style={{ margin: '0 16px' }}>
+          <Content style={{ margin: '0 16px' }} history={this.props.history}>
             <Route path="/Home" component={Home}/>
             <Route path="/SpreadDetail" component={SpreadDetail}/>
-            <Route path="/filter" component={Filter}/>
-            <Route path="/filterDealer" component={FilterDealer}/>
-            <Route path="/filterAgent" component={FilterAgent}/>
-            <Route path="/filterDriver" component={FilterDriver}/>
             <Route path="/Distributor" component={Distributor}/>
             <Route path="/DistributorDetail" component={DistributorDetail}/>
-            <Route path="/Driver" component={Driver}/>
             <Route path="/Dealer" component={Dealer}/>
             <Route path="/DealerDetail" component={DealerDetail}/>
             <Route path="/Agent" component={Agent}/>
             <Route path="/AgenDetail" component={AgenDetail}/>
+            <Route path="/Driver" component={Driver}/>
             <Route path="/Logout" component={Logout}/>
 
           </Content>
@@ -54,9 +47,8 @@ class App extends Component {
       <Navbar/>
           
       </Switch> 
-      </HashRouter>
+      </BrowserRouter>
   );
 }
 }
 
-export default (App);

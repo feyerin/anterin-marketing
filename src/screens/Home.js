@@ -43,7 +43,6 @@ export class Home extends Component {
     this.setState({ 
       ...this.state,
       loading: true });
-    console.log("ONREQUEST", this.state.data.id)
     axios.get(
        URL + "api/v1/marketing/spread?page="+ this.state.pagination.current,
       {
